@@ -1,10 +1,13 @@
 package codingbo.viewlibrary.unreadView;
 
+import android.animation.ObjectAnimator;
+import android.animation.PointFEvaluator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.text.TextPaint;
@@ -41,6 +44,7 @@ public class UnreadView extends View {
     private Rect mTextBounds;
     private int textSize = 20;
     private Path mPath;
+    private int defaultRadius;
 
 
     public UnreadView(Context context) {
@@ -63,7 +67,7 @@ public class UnreadView extends View {
         mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(Color.WHITE);
-
+        mTextPaint.setTextSize(50);
         mTextBounds = new Rect();
 
         mPath = new Path();
@@ -78,15 +82,27 @@ public class UnreadView extends View {
         int height = getHeight();
         mCX = width / 2;
         mCY = height / 2;
-        mCRadius = Math.min(width, height) / 2;
+        defaultRadius = Math.min(width, height) / 2;
+        mCRadius = defaultRadius;
 
-        mFX = width / 2 + 300;
-        mFY = height / 2 + 300;
-        mFRadius = Math.min(width, height) / 2;
+        mFX = mCX + 300;
+        mFY = mCY + 300;
+        mFRadius = mCRadius;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+
+
+        float dY = mFY - mCY;
+        float dX = mFX - mCX;
+        mDistance = Math.sqrt(Math.hypot(dX, dY));
+
+        mCRadius = (int) Math.abs(defaultRadius - mDistance);
+
+        Log.d(TAG, "mDistance: " + mDistance);
+        Log.d(TAG, "mCRadius: " + mCRadius);
+
         mPaint.setColor(Color.RED);
         mPaint.setStrokeWidth(1);
         //draw center circle
@@ -96,18 +112,13 @@ public class UnreadView extends View {
         canvas.drawCircle(mFX, mFY, mFRadius, mPaint);
 
 
-        mDistance = Math.sqrt(Math.hypot(mCX - mFX, mCY - mFY));
         double angle;
-        if (mCX - mFX == 0) {
+        if (dX == 0) {
             angle = 0;
         } else {
-            angle = Math.atan(Math.abs((mCY - mFY) / (mCX - mFX))) / Math.PI * 180;
+            angle = -Math.atan(dY / dX);
         }
 
-        Log.d(TAG, "angle: " + angle);
-
-
-        //考虑象限
         float c1x = (float) (mCX - Math.sin(angle) * mCRadius);
         float c1y = (float) (mCY - Math.cos(angle) * mCRadius);
 
@@ -123,38 +134,16 @@ public class UnreadView extends View {
         float cX = mCX / 2 + mFX / 2;
         float cY = mCY / 2 + mFY / 2;
 
-//        mPath.moveTo(c1x, c1y);
-//        mPath.rQuadTo(cX, cY, f2x, f2y);
-//        mPath.lineTo(f1x, f1y);
-//        mPath.rQuadTo(cX, cY, c2x, c2y);
-//        mPath.close();
+        mPaint.setColor(Color.RED);
+//        mPaint.setStyle(Paint.Style.STROKE);
 
-
-//        mPath.moveTo(c1x, c1y);
-//        mPath.lineTo(cX, cY);
-//        mPath.lineTo(f1x, f1y);
-//        mPath.lineTo(f2x, f2y);
-//        mPath.lineTo(cX, cY);
-//        mPath.lineTo(c2x, c2y);
-//        mPath.close();
-
-//        Log.d(TAG, "c1: " + "(" + c1x + "," + c1y + ")");
-//        Log.d(TAG, "c2: " + "(" + c2x + "," + c2y + ")");
-//        Log.d(TAG, "f1: " + "(" + f1x + "," + f1y + ")");
-//        Log.d(TAG, "f2: " + "(" + f2x + "," + f2y + ")");
-
-//        canvas.drawPath(mPath, mPaint);
-
-
-        mPaint.setColor(Color.BLACK);
-        mPaint.setStrokeWidth(10);
-        mPaint.setStrokeCap(Paint.Cap.ROUND);
-        canvas.drawPoint(c1x, c1y, mPaint);
-        canvas.drawPoint(c2x, c2y, mPaint);
-        canvas.drawPoint(f1x, f1y, mPaint);
-        canvas.drawPoint(f2x, f2y, mPaint);
-        canvas.drawPoint(cX, cY, mPaint);
-
+        mPath.reset();
+        mPath.moveTo(c1x, c1y);
+        mPath.cubicTo(c1x, c1y, cX, cY, f1x, f1y);
+        mPath.lineTo(f2x, f2y);
+        mPath.cubicTo(f2x, f2y, cX, cY, c2x, c2y);
+        mPath.close();
+        canvas.drawPath(mPath, mPaint);
     }
 
     @Override
@@ -170,18 +159,31 @@ public class UnreadView extends View {
                 mFX = x;
                 mFY = y;
                 invalidate();
-                getParent().requestLayout();
                 break;
             case MotionEvent.ACTION_UP:
-                mFX = mCX;
-                mFY = mCY;
-                invalidate();
-                getParent().requestLayout();
+//                mFX = mCX;
+//                mFY = mCY;
+
+                ObjectAnimator animator = ObjectAnimator.ofObject(this, "point", new PointFEvaluator(),
+                        new PointF(x, y), new PointF(mCX, mCY));
+                animator.setDuration(300);
+                animator.start();
+
                 break;
 
             default:
                 break;
         }
         return true;
+    }
+
+    public void setPoint(PointF pointF) {
+        mFX = pointF.x;
+        mFY = pointF.y;
+        invalidate();
+    }
+
+    public PointF getPoint() {
+        return new PointF(mFX, mFY);
     }
 }
