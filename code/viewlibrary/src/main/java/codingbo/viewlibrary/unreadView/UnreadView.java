@@ -88,6 +88,7 @@ public class UnreadView extends View {
         super.onLayout(changed, left, top, right, bottom);
         int width = getWidth();
         int height = getHeight();
+
         mCX = width / 2;
         mCY = height / 2;
         defaultRadius = Math.min(width, height) / 2;
@@ -101,16 +102,16 @@ public class UnreadView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
-
         float dY = mFY - mCY;
         float dX = mFX - mCX;
+
+        Log.d(TAG, "(" + mFX + "," + mFY + ")");
         mDistance = Math.hypot(dX, dY);
 
         mCRadius = (int) (defaultRadius - mDistance / 10);
         if (mCRadius <= 0) {
             mCRadius = 1;
         }
-
 
         mPaint.setColor(Color.RED);
         mPaint.setStrokeWidth(1);
@@ -120,10 +121,8 @@ public class UnreadView extends View {
         //draw finger circle
         canvas.drawCircle(mFX, mFY, mFRadius, mPaint);
 
-        float cX = mCX / 2 + mFX / 2;
-        float cY = mCY / 2 + mFY / 2;
+        mode1(canvas, mPaint, new PointF(mCX, mCY), new PointF(mFX, mFY), mCRadius, mFRadius);
 
-        mode1(canvas, dX, dY, cX, cY);
 //        mode2(canvas, cX, cY);
 
 
@@ -159,7 +158,12 @@ public class UnreadView extends View {
 //        }
     }
 
-    private void mode1(Canvas canvas, float dX, float dY, float cX, float cY) {
+    //    private void mode1(Canvas canvas, Paint paint, float cx, float cy, float fx, float fy, int cRadius, int fRadius) {
+    private void mode1(Canvas canvas, Paint paint, PointF cp, PointF fp, int cRadius, int fRadius) {
+        float dY = fp.y - cp.y;
+        float dX = fp.x - cp.x;
+        float cX = cp.x / 2 + fp.x / 2;
+        float cY = cp.y / 2 + fp.y / 2;
         double angle;
         if (dX == 0) {
             angle = 0;
@@ -167,43 +171,34 @@ public class UnreadView extends View {
             angle = -Math.atan(dY / dX);
         }
 
-        float c1x = (float) (mCX - Math.sin(angle) * mCRadius);
-        float c1y = (float) (mCY - Math.cos(angle) * mCRadius);
+        float c1x = (float) (cp.x - Math.sin(angle) * cRadius);
+        float c1y = (float) (cp.y - Math.cos(angle) * cRadius);
 
-        float c2x = (float) (mCX + Math.sin(angle) * mCRadius);
-        float c2y = (float) (mCY + Math.cos(angle) * mCRadius);
+        float c2x = (float) (cp.x + Math.sin(angle) * cRadius);
+        float c2y = (float) (cp.y + Math.cos(angle) * cRadius);
 
-        float f1x = (float) (mFX - Math.sin(angle) * mFRadius);
-        float f1y = (float) (mFY - Math.cos(angle) * mFRadius);
+        float f1x = (float) (fp.x - Math.sin(angle) * fRadius);
+        float f1y = (float) (fp.y - Math.cos(angle) * fRadius);
 
-        float f2x = (float) (mFX + Math.sin(angle) * mFRadius);
-        float f2y = (float) (mFY + Math.cos(angle) * mFRadius);
+        float f2x = (float) (fp.x + Math.sin(angle) * fRadius);
+        float f2y = (float) (fp.y + Math.cos(angle) * fRadius);
 
-
-        drawAdhesion(canvas, new PointF(cX, cY),
+        drawAdhesion(canvas, paint, new PointF(cX, cY),
                 new PointF(c1x, c1y),
                 new PointF(c2x, c2y),
                 new PointF(f1x, f1y),
                 new PointF(f2x, f2y));
     }
 
-    private void drawAdhesion(Canvas canvas, PointF c, PointF c1, PointF c2, PointF f1, PointF f2) {
-        mPaint.setColor(Color.RED);
-//        mPaint.setStyle(Paint.Style.STROKE);
-        mPath.reset();
-        mPath.moveTo(c1.x, c1.y);
-        mPath.cubicTo(c1.x, c1.y, c.x, c.y, f1.x, f1.y);
-        mPath.lineTo(f2.x, f2.y);
-        mPath.cubicTo(f2.x, f2.y, c.x, c.y, c2.x, c2.y);
-        mPath.close();
-        canvas.drawPath(mPath, mPaint);
-
-
-//        canvas.drawPoint(c.x, c.y, mPointPaint);
-//        canvas.drawPoint(c1.x, c1.y, mPointPaint);
-//        canvas.drawPoint(c2.x, c2.y, mPointPaint);
-//        canvas.drawPoint(f1.x, f1.y, mPointPaint);
-//        canvas.drawPoint(f2.x, f2.y, mPointPaint);
+    private void drawAdhesion(Canvas canvas, Paint paint, PointF c, PointF c1, PointF c2, PointF f1, PointF f2) {
+        Path path = new Path();
+        path.reset();
+        path.moveTo(c1.x, c1.y);
+        path.cubicTo(c1.x, c1.y, c.x, c.y, f1.x, f1.y);
+        path.lineTo(f2.x, f2.y);
+        path.cubicTo(f2.x, f2.y, c.x, c.y, c2.x, c2.y);
+        path.close();
+        canvas.drawPath(path, paint);
     }
 
     @Override
@@ -230,7 +225,6 @@ public class UnreadView extends View {
                 animator.start();
 
                 break;
-
             default:
                 break;
         }
@@ -249,6 +243,7 @@ public class UnreadView extends View {
 
 
     /**
+     * TODO 算法待写
      * 根据圆外一点 求与圆的两个切点
      *
      * @param circlePoint 圆心
