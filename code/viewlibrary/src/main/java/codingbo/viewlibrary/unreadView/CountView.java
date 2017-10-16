@@ -20,7 +20,8 @@ import android.view.MotionEvent;
  */
 
 public class CountView extends android.support.v7.widget.AppCompatTextView {
-    private static final int MIN_RADIUS = 20;
+    private static final int MIN_RADIUS = 10;
+    private static final int ROLLBACK_DURATION = 200;
     private Paint mPaint;
 
     private int mCX;
@@ -29,9 +30,12 @@ public class CountView extends android.support.v7.widget.AppCompatTextView {
     private float mFY;
 
     private int defaultRadius;
-    private Paint mPointPaint;
     private int mCRadius;
     private int mFRadius;
+
+    private StatusListener mStatusListener;
+    private double mDistance;
+    private boolean IsHide = false;
 
     public CountView(Context context) {
         this(context, null);
@@ -72,31 +76,32 @@ public class CountView extends android.support.v7.widget.AppCompatTextView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
+        if (IsHide) {
+            return;
+        }
         //绘制底view
         float dx = mFX - mCX;
         float dy = mFY - mCY;
-        double distance = Math.hypot(dx, dy);
+        mDistance = Math.hypot(dx, dy);
 
         if (dx == 0 && dy == 0) {
             //静止
             DrawBackgroundUtils.drawCircleBg(canvas, mPaint, getWidth(), getHeight());
         } else {
             //动态
-            mCRadius = (int) (defaultRadius - distance / 10);
-            if (mCRadius > MIN_RADIUS) {
-                canvas.drawCircle(mCX, mCY, mCRadius, mPaint);
-            } else {
+            mCRadius = (int) (defaultRadius - mDistance / 10);
+            if (mCRadius <= MIN_RADIUS) {
                 mCRadius = 0;
+            } else {
+                canvas.drawCircle(mCX, mCY, mCRadius, mPaint);
             }
         }
 
         //绘制随手指移动view
-//        canvas.drawCircle(mFX, mFY, mFRadius, mPaint);
         DrawBackgroundUtils.drawCircleBg(canvas, mPaint, getWidth(), getHeight(), mFX - getWidth() / 2, mFY - getHeight() / 2);
 
         //绘制粘连效果
-        if (distance > 0) {
+        if (mDistance > 0) {
             drawAdhesion(canvas, mPaint, new PointF(mCX, mCY), new PointF(mFX, mFY), mCRadius, mFRadius);
         }
 
@@ -113,11 +118,16 @@ public class CountView extends android.support.v7.widget.AppCompatTextView {
 //        super.onDraw(canvas);
     }
 
-
+    /**
+     * 绘制粘连效果
+     */
     private void drawAdhesion(Canvas canvas, Paint paint, PointF cp, PointF fp, int cRadius, int fRadius) {
         if (cRadius <= MIN_RADIUS || fRadius <= MIN_RADIUS) {
             return;
+        } else {
+            IsHide = false;
         }
+
         float dY = fp.y - cp.y;
         float dX = fp.x - cp.x;
         float cX = cp.x / 2 + fp.x / 2;
@@ -150,6 +160,9 @@ public class CountView extends android.support.v7.widget.AppCompatTextView {
         canvas.drawPath(path, paint);
     }
 
+    /**
+     * 得到path
+     */
     private Path getPath(PointF c, PointF c1, PointF c2, PointF f1, PointF f2) {
         Path path = new Path();
         path.reset();
@@ -175,10 +188,21 @@ public class CountView extends android.support.v7.widget.AppCompatTextView {
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                ObjectAnimator animator = ObjectAnimator.ofObject(this, "point", new PointFEvaluator(),
-                        new PointF(x, y), new PointF(mCX, mCY));
-                animator.setDuration(300);
-                animator.start();
+                mFX = x;
+                mFY = y;
+                if (mCRadius < MIN_RADIUS) {
+                    if (mStatusListener != null && !IsHide) {
+                        mStatusListener.onHide();
+                    }
+                    IsHide = true;
+                    //// TODO: 17.10.16 加一些消失动画
+                    invalidate();
+                } else {
+                    ObjectAnimator animator = ObjectAnimator.ofObject(this, "point", new PointFEvaluator(),
+                            new PointF(x, y), new PointF(mCX, mCY));
+                    animator.setDuration(ROLLBACK_DURATION);
+                    animator.start();
+                }
                 break;
             default:
                 break;
@@ -194,5 +218,16 @@ public class CountView extends android.support.v7.widget.AppCompatTextView {
 
     public PointF getPoint() {
         return new PointF(mFX, mFY);
+    }
+
+
+    public interface StatusListener {
+
+        void onHide();
+
+    }
+
+    public void setStatusListener(StatusListener listener) {
+        mStatusListener = listener;
     }
 }
