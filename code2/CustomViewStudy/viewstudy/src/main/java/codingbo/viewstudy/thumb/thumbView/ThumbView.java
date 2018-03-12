@@ -102,15 +102,15 @@ public class ThumbView extends View {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
 
-        Log.d(TAG, "AT_MOST: " + MeasureSpec.AT_MOST);
-        Log.d(TAG, "EXACTLY: " + MeasureSpec.EXACTLY);
-        Log.d(TAG, "UNSPECIFIED: " + MeasureSpec.UNSPECIFIED);
-
-        Log.d(TAG, "widthMode: " + widthMode);
-        Log.d(TAG, "heightMode: " + heightMode);
+//        Log.d(TAG, "AT_MOST: " + MeasureSpec.AT_MOST);
+//        Log.d(TAG, "EXACTLY: " + MeasureSpec.EXACTLY);
+//        Log.d(TAG, "UNSPECIFIED: " + MeasureSpec.UNSPECIFIED);
+//
+//        Log.d(TAG, "widthMode: " + widthMode);
+//        Log.d(TAG, "heightMode: " + heightMode);
 
         if (widthMode == MeasureSpec.AT_MOST) {
-            widthMeasureSpec = MeasureSpec.makeMeasureSpec(mStandardThumbNormal.getHeight() * 3 / 2, widthMode);
+            widthMeasureSpec = MeasureSpec.makeMeasureSpec(mStandardThumbNormal.getWidth() * 3 / 2, widthMode);
         }
 
         if (heightMode == MeasureSpec.AT_MOST) {
