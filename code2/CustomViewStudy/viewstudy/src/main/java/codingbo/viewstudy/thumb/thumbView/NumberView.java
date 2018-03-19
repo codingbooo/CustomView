@@ -94,11 +94,11 @@ public class NumberView extends View {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
         if (widthMode == MeasureSpec.AT_MOST) {
-            widthMeasureSpec = MeasureSpec.makeMeasureSpec(mRect.width() * 3 / 2, widthMode);
+            widthMeasureSpec = MeasureSpec.makeMeasureSpec(mRect.width() + getPaddingLeft() + getPaddingRight(), widthMode);
         }
 
         if (heightMode == MeasureSpec.AT_MOST) {
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(mRect.height() * 3 / 2, heightMode);
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(mRect.height() + getPaddingTop() + getPaddingBottom(), heightMode);
         }
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -182,7 +182,7 @@ public class NumberView extends View {
     private void getPoint() {
         Log.d(TAG, "getPoint: ");
 
-        mTextPaint.getTextBounds(mOldStrNumber, 0, mOldStrNumber.length(), mRect);
+        mTextPaint.getTextBounds(mNewStrNumber, 0, mNewStrNumber.length(), mRect);
 
 //        float width = mTextPaint.measureText(mOldStrNumber);
 
@@ -203,9 +203,6 @@ public class NumberView extends View {
                 .with(alpha);
         set.start();
 
-//        animUp.setDuration(300);
-//        animUp.start();
-
     }
 
     public void animDown() {
@@ -219,8 +216,6 @@ public class NumberView extends View {
                 .play(animDown)
                 .with(alpha);
         set.start();
-//        animDown.setDuration(300);
-//        animDown.start();
     }
 
     public int getTextAlpha() {

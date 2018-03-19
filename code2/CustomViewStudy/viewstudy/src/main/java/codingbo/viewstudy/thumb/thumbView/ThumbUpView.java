@@ -35,11 +35,13 @@ public class ThumbUpView extends LinearLayout {
     private void init() {
         setGravity(Gravity.CENTER);
         setOrientation(HORIZONTAL);
-//        setClipChildren(false);
+        setClipChildren(false);
 
         ThumbView thumbView = new ThumbView(getContext());
         NumberView numberView = new NumberView(getContext());
 
+        numberView.setPadding(10, 10, 10, 10);
+        numberView.setGap(1);
         numberView.setCount(999);
 
         addView(thumbView);
