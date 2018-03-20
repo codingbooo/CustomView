@@ -34,7 +34,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void goActivity(Class aClass) {
+        startActivity(new Intent(this, aClass));
+    }
+
     public void thumb(View view) {
-        startActivity(new Intent(this, ThumbUpActivity.class));
+        goActivity(ThumbUpActivity.class);
+    }
+
+    public void view3d(View view) {
+        goActivity(View3dActivity.class);
     }
 }

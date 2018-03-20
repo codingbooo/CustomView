@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ThumbUpActivity"/>
+        <activity android:name=".View3dActivity"/>
     </application>
 
 </manifest>
