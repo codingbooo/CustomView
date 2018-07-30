@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import codingbo.viewstudy.touchConflict.LayoutActivity;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
@@ -44,5 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void view3d(View view) {
         goActivity(View3dActivity.class);
+    }
+
+    public void touch(View view) {
+        goActivity(LayoutActivity.class);
     }
 }

@@ -18,8 +18,11 @@ android {
         }
     }
 
+    flavorDimensions("xxx")
     productFlavors {
+        dimension
         bendi {
+
             buildConfigField "int", "ENV_TYPE", "0"
             applicationId 'codingbo.customviewstudy.local'
             manifestPlaceholders = [
