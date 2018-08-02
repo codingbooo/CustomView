@@ -17,12 +17,29 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
             </intent-filter>
         </activity>
         <activity android:name=".ThumbUpActivity"/>
         <activity android:name=".View3dActivity"/>
         <activity android:name=".touchConflict.LayoutActivity"/>
+        <activity android:name=".touchConflict.ScrollActivity"/>
+
+        <activity android:name=".PhotoLayoutActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".MyActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

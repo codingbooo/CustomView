@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 
 import codingbo.viewstudy.touchConflict.LayoutActivity;
+import codingbo.viewstudy.touchConflict.ScrollActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void touch(View view) {
-        goActivity(LayoutActivity.class);
+//        goActivity(LayoutActivity.class);
+        goActivity(ScrollActivity.class);
     }
 }

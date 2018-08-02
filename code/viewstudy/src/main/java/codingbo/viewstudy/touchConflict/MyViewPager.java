@@ -25,13 +25,24 @@ public class MyViewPager extends ViewPager {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 
+        Log.d(TAG, "dispatchTouchEvent: ");
         boolean b = super.dispatchTouchEvent(ev);
         Log.d(TAG, "dispatchTouchEvent: " + b);
         return b;
     }
 
     @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.d(TAG, "onInterceptTouchEvent: ");
+        boolean b = super.onInterceptTouchEvent(ev);
+        Log.d(TAG, "onInterceptTouchEvent: " + b);
+        return b;
+
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent e) {
+        Log.d(TAG, "onTouchEvent: ");
         boolean b = super.onTouchEvent(e);
         Log.d(TAG, "onTouchEvent: " + b);
         return b;

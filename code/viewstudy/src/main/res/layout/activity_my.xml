@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <codingbo.viewstudy.myLayout.MyHorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        >
+
+        <View
+            android:layout_width="600dp"
+            android:layout_height="100dp"
+            android:background="#fcd5d5"/>
+
+        <View
+            android:layout_width="600dp"
+            android:layout_height="200dp"
+            android:background="#d5fad5"/>
+
+        <View
+            android:layout_width="600dp"
+            android:layout_height="200dp"
+            android:background="#fafdce"/>
+
+        <View
+            android:layout_width="600dp"
+            android:layout_height="200dp"
+            android:background="#afbcff"/>
+
+        <View
+            android:layout_width="600dp"
+            android:layout_height="200dp"
+            android:background="#f7a0f7"/>
+
+    </codingbo.viewstudy.myLayout.MyHorizontalScrollView>
+
+</LinearLayout>

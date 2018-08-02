@@ -28,8 +28,17 @@ public class MyImageView extends ImageView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        Log.d(TAG, "onTouchEvent: ");
         boolean touchEvent = super.onTouchEvent(event);
         Log.d(TAG, "onTouchEvent: " + touchEvent);
         return touchEvent;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        Log.d(TAG, "dispatchTouchEvent: ");
+        boolean b = super.dispatchTouchEvent(event);
+        Log.d(TAG, "dispatchTouchEvent: " + b);
+        return b;
     }
 }
