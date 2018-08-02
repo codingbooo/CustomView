@@ -26,6 +26,8 @@ public class MyHorizontalScrollView extends ViewGroup {
     private float mLastX;
     private float mLastY;
     private int mWidthPixels;
+    private float mIntercepterX;
+    private float mIntercepterY;
 
     public MyHorizontalScrollView(Context context) {
         this(context, null);
@@ -100,6 +102,40 @@ public class MyHorizontalScrollView extends ViewGroup {
         mWidthPixels = getResources().getDisplayMetrics().widthPixels;
     }
 
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        float x = ev.getX();
+        float y = ev.getY();
+
+        boolean intercept = false;
+
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                intercept = false;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float deltaX = x - mIntercepterX;
+                float deltaY = y - mIntercepterY;
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    intercept = true;
+                }
+
+                break;
+            case MotionEvent.ACTION_UP:
+
+                break;
+            default:
+                break;
+        }
+        mLastX = x;
+        mLastY = y;
+
+        mIntercepterX = x;
+        mIntercepterY = y;
+        return intercept;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         mVelocityTracker.addMovement(event);
@@ -131,12 +167,7 @@ public class MyHorizontalScrollView extends ViewGroup {
 
                 int time = (int) Math.abs(xVelocity / FRICTION_COEFFICIENT);
 
-//                int flag = xVelocity > 0 ? 1 : -1;
-//                int dx = (int) ((Math.abs(xVelocity) ) * time * flag / 2);
-
                 int dx = (int) (xVelocity * time / 2);
-
-                Log.d(TAG, "onTouchEvent: " + -dx + " " + time);
 
                 if (scrollX - dx < 0) {
                     dx = scrollX;
@@ -144,7 +175,6 @@ public class MyHorizontalScrollView extends ViewGroup {
                     dx = scrollX - getWidth() + mWidthPixels;
                 }
                 mScroller.startScroll(getScrollX(), 0, -dx, 0, time * 10);
-
                 invalidate();
                 mVelocityTracker.clear();
 
