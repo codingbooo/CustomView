@@ -2,7 +2,6 @@ package codingbo.viewstudy.myLayout;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -26,8 +25,8 @@ public class MyHorizontalScrollView extends ViewGroup {
     private float mLastX;
     private float mLastY;
     private int mWidthPixels;
-    private float mIntercepterX;
-    private float mIntercepterY;
+    private float mInterceptX;
+    private float mInterceptY;
 
     public MyHorizontalScrollView(Context context) {
         this(context, null);
@@ -115,8 +114,8 @@ public class MyHorizontalScrollView extends ViewGroup {
                 intercept = false;
                 break;
             case MotionEvent.ACTION_MOVE:
-                float deltaX = x - mIntercepterX;
-                float deltaY = y - mIntercepterY;
+                float deltaX = x - mInterceptX;
+                float deltaY = y - mInterceptY;
                 if (Math.abs(deltaX) > Math.abs(deltaY)) {
                     intercept = true;
                 }
@@ -131,8 +130,8 @@ public class MyHorizontalScrollView extends ViewGroup {
         mLastX = x;
         mLastY = y;
 
-        mIntercepterX = x;
-        mIntercepterY = y;
+        mInterceptX = x;
+        mInterceptY = y;
         return intercept;
     }
 

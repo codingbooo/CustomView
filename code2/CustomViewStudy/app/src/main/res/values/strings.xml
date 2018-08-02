@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">CustomViewStudy</string>
-    <string name="app_name_local">local</string>
-    <string name="app_name_test">test</string>
-    <string name="app_name_release">release</string>
-</resources>
