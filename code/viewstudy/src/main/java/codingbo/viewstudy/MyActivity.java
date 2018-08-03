@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import codingbo.viewstudy.myLayout.MyHorizontalScrollView;
+import codingbo.viewstudy.myLayout.MyProgressView;
 
 /**
  * Created by bob
@@ -29,11 +30,14 @@ public class MyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my);
 
         mScrollView = findViewById(R.id.hor_scroll);
+
+//        MyProgressView progressView = new MyProgressView(this);
+
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
             list.add("item" + i);
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.item_list, null);
             TextView tvTitle = view.findViewById(R.id.tv_title);
             tvTitle.setText("title" + i);

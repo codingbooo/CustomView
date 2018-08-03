@@ -101,39 +101,52 @@ public class MyHorizontalScrollView extends ViewGroup {
         mWidthPixels = getResources().getDisplayMetrics().widthPixels;
     }
 
-
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+//        return super.onInterceptTouchEvent(ev);
         float x = ev.getX();
         float y = ev.getY();
-
-        boolean intercept = false;
-
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                intercept = false;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                float deltaX = x - mInterceptX;
-                float deltaY = y - mInterceptY;
-                if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                    intercept = true;
-                }
-
-                break;
-            case MotionEvent.ACTION_UP:
-
-                break;
-            default:
-                break;
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            return false;
         }
+
         mLastX = x;
         mLastY = y;
-
-        mInterceptX = x;
-        mInterceptY = y;
-        return intercept;
+        return true;
     }
+
+    //    @Override
+//    public boolean onInterceptTouchEvent(MotionEvent ev) {
+//        float x = ev.getX();
+//        float y = ev.getY();
+//
+//        boolean intercept = false;
+//
+//        switch (ev.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                intercept = false;
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                float deltaX = x - mInterceptX;
+//                float deltaY = y - mInterceptY;
+//                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+//                    intercept = true;
+//                }
+//
+//                break;
+//            case MotionEvent.ACTION_UP:
+//
+//                break;
+//            default:
+//                break;
+//        }
+//        mLastX = x;
+//        mLastY = y;
+//
+//        mInterceptX = x;
+//        mInterceptY = y;
+//        return intercept;
+//    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -160,7 +173,7 @@ public class MyHorizontalScrollView extends ViewGroup {
                 break;
             case MotionEvent.ACTION_UP:
 
-                mVelocityTracker.computeCurrentVelocity(10);
+                mVelocityTracker.computeCurrentVelocity(30);
 
                 float xVelocity = mVelocityTracker.getXVelocity();
 

@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:textSize="30sp"/>
 
-    <ListView
+    <!--<ListView-->
+    <codingbo.viewstudy.myLayout.MyListView
         android:id="@+id/ll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

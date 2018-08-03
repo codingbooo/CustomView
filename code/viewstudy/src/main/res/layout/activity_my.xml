@@ -2,15 +2,25 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
+    <!--<codingbo.viewstudy.myLayout.MyProgressView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="100dp"-->
+    <!--android:background="#ddffdd"-->
+    <!--android:padding="10dp"-->
+    <!--/>-->
+
+
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="100dp"/>
 
     <codingbo.viewstudy.myLayout.MyHorizontalScrollView
         android:id="@+id/hor_scroll"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        >
-
-    </codingbo.viewstudy.myLayout.MyHorizontalScrollView>
+        android:layout_height="match_parent"
+        />
 
 </LinearLayout>
