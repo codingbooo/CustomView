@@ -5,22 +5,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--<codingbo.viewstudy.myLayout.MyProgressView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="100dp"-->
-    <!--android:background="#ddffdd"-->
-    <!--android:padding="10dp"-->
-    <!--/>-->
-
-
-    <ProgressBar
+    <codingbo.viewstudy.myLayout.MyProgressView
         android:layout_width="match_parent"
-        android:layout_height="100dp"/>
+        android:layout_height="100dp"
+        android:background="#ddffdd"
+        android:padding="10dp"
+        />
 
     <codingbo.viewstudy.myLayout.MyHorizontalScrollView
         android:id="@+id/hor_scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
+
 
 </LinearLayout>

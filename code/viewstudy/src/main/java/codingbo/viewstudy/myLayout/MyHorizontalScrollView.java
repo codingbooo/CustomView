@@ -70,8 +70,6 @@ public class MyHorizontalScrollView extends ViewGroup {
             measureHeight = height;
         }
         setMeasuredDimension(measureWidth, measureHeight);
-
-
     }
 
     @Override
@@ -82,7 +80,7 @@ public class MyHorizontalScrollView extends ViewGroup {
         int w = getWidth();
 
         int left = l;
-        int top = t;
+        int top = 0;
         int right = left;
         int bottom = top;
 
