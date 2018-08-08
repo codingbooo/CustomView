@@ -53,4 +53,8 @@ public class MainActivity extends AppCompatActivity {
 //        goActivity(LayoutActivity.class);
         goActivity(ScrollActivity.class);
     }
+
+    public void floatView(View view) {
+        goActivity(FloatViewActivity.class);
+    }
 }
