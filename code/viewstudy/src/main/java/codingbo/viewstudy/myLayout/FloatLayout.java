@@ -67,22 +67,20 @@ public class FloatLayout extends ViewGroup {
 
 
             measureChild(child, widthMeasureSpec, heightMeasureSpec);
-            LayoutParams lp = child.getLayoutParams();
             maxWidth = Math.max(maxWidth, child.getMeasuredWidth());
             maxHeight = Math.max(maxHeight, child.getMeasuredHeight());
-
         }
 
-        setMeasuredDimension(MeasureSpec.makeMeasureSpec(maxWidth, widthMode),
-                MeasureSpec.makeMeasureSpec(maxHeight, heightMode));
+        setMeasuredDimension(MeasureSpec.makeMeasureSpec(maxWidth + getPaddingLeft() + getPaddingRight(), widthMode),
+                MeasureSpec.makeMeasureSpec(maxHeight + getPaddingTop() + getPaddingBottom(), heightMode));
     }
 
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         View child = getChildAt(0);
-        int left = 0;
-        int top = 0;
+        int left = getPaddingLeft();
+        int top = getPaddingTop();
         int right = left + child.getMeasuredWidth();
         int bottom = top + child.getMeasuredHeight();
         child.layout(left, top, right, bottom);
@@ -137,9 +135,6 @@ public class FloatLayout extends ViewGroup {
                 break;
             }
             case MotionEvent.ACTION_UP: {
-                float deltaX = x - mDownX;
-                float deltaY = y - mDownY;
-                Log.d(TAG, "delta: " + deltaX + " : " + deltaY);
                 x = -1;
                 y = -1;
                 break;
@@ -165,9 +160,6 @@ public class FloatLayout extends ViewGroup {
         int cW = getMeasuredWidth();
         int cH = getMeasuredHeight();
 
-        Log.d(TAG, "parentSize : " + pW + "," + pH);
-        Log.d(TAG, "childSize : " + cW + "," + cH);
-
         params.rightMargin -= x;
         params.bottomMargin -= y;
 
@@ -182,8 +174,15 @@ public class FloatLayout extends ViewGroup {
         } else if (params.bottomMargin > pH - cH) {
             params.bottomMargin = pH - cH;
         }
-        Log.d(TAG, params.bottomMargin
-                + "  " + params.rightMargin);
+
+        Log.d(TAG, "parentSize : " + pW + "," + pH);
+        Log.d(TAG, "childSize : " + cW + "," + cH);
+
+        Log.d(TAG, "max bottom margin: " + (pH - cH));
+        Log.d(TAG, "bottom margin: " + params.bottomMargin);
+
+        Log.d(TAG, "max right margin: " + (pW - cW));
+        Log.d(TAG, "right margin: " + params.rightMargin);
 
         requestLayout();
     }
