@@ -182,10 +182,8 @@ public class FloatLayout extends ViewGroup {
         } else if (params.bottomMargin > pH - cH) {
             params.bottomMargin = pH - cH;
         }
-//        Log.d(TAG, params.leftMargin
-//                + "  " + params.topMargin
-//                + "  " + params.bottomMargin
-//                + "  " + params.rightMargin);
+        Log.d(TAG, params.bottomMargin
+                + "  " + params.rightMargin);
 
         requestLayout();
     }
