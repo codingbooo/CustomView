@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="FloatContainerLayout_Layout">
+        <attr name="pos_x" format="dimension"/>
+        <attr name="pos_y" format="dimension"/>
+    </declare-styleable>
+</resources>

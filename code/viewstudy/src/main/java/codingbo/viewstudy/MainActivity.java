@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void floatView2(View view) {
 
-        Intent intent = new Intent(this, FloatService.class);
-        startService(intent);
+        Intent intent = new Intent(this, FloatContainerActivity.class);
+        startActivity(intent);
 
     }
 }
