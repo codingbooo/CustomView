@@ -5,9 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 import codingbo.viewstudy.touchConflict.LayoutActivity;
 import codingbo.viewstudy.touchConflict.ScrollActivity;
+import codingbo.viewstudy.windowFloat.FloatService;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -56,5 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void floatView(View view) {
         goActivity(FloatViewActivity.class);
+    }
+
+    public void floatView2(View view) {
+
+        Intent intent = new Intent(this, FloatService.class);
+        startService(intent);
+
     }
 }
