@@ -1,5 +1,8 @@
 package codingbo.viewstudy.myLayout;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -7,12 +10,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 
 import codingbo.viewstudy.R;
 
 /**
  * 悬浮窗体容器类
- *  todo 粘性
+ * todo 粘性
  *
  * @author bob
  */
@@ -25,6 +29,7 @@ public class FloatContainerLayout extends ViewGroup {
     private int mTouchSlop;
     private float mDownX;
     private float mDownY;
+    private boolean mAutoEdge;
 
     public FloatContainerLayout(Context context) {
         this(context, null);
@@ -37,18 +42,16 @@ public class FloatContainerLayout extends ViewGroup {
     public FloatContainerLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.FloatContainerLayout);
+        mAutoEdge = ta.getBoolean(R.styleable.FloatContainerLayout_auto_edge, false);
+
+        ta.recycle();
     }
 
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
         //只测量两个Child 第一个为主View  第二个为悬浮View
         int count = getChildCount();
@@ -175,6 +178,8 @@ public class FloatContainerLayout extends ViewGroup {
         int right = left + child.getMeasuredWidth();
         int bottom = top + child.getMeasuredHeight();
 
+//        Log.d(TAG, "layoutFloatView111: " + left + ":" + top + ":" + right + ":" + bottom);
+
         right = right > edgeRight ? edgeRight : right;
         bottom = bottom > edgeBottom ? edgeBottom : bottom;
 
@@ -183,6 +188,8 @@ public class FloatContainerLayout extends ViewGroup {
 
         top = bottom - child.getMeasuredHeight();
         top = top < edgeTop ? edgeTop : top;
+
+//        Log.d(TAG, "layoutFloatView222: " + left + ":" + top + ":" + right + ":" + bottom);
 
         child.layout(left, top, right, bottom);
     }
@@ -253,17 +260,17 @@ public class FloatContainerLayout extends ViewGroup {
             case MotionEvent.ACTION_MOVE:
                 float deltaX = x - mLastX;
                 float deltaY = y - mLastY;
+
                 moveFloatView(deltaX, deltaY);
                 isSliding = true;
-//                if (Math.abs(deltaX) > mTouchSlop || Math.abs(deltaY) > mTouchSlop) {
-//
-//                    result = true;
-//                }
                 break;
             case MotionEvent.ACTION_UP:
                 x = 0;
                 y = 0;
                 isSliding = false;
+                if (mAutoEdge) {
+                    goTheEdge();
+                }
                 break;
             default:
                 break;
@@ -271,6 +278,58 @@ public class FloatContainerLayout extends ViewGroup {
         mLastX = x;
         mLastY = y;
         return true;
+    }
+
+    private void goTheEdge() {
+        //判断离哪边近
+        View view = getChildAt(1);
+
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+
+        int left = location[0];
+        int top = location[1];
+        int right = left + view.getMeasuredWidth();
+        int bottom = top + view.getMeasuredHeight();
+
+        final int edgeLeft = getLeft() + getPaddingLeft();
+        final int edgeRight = getRight() - getPaddingRight();
+
+        int distance = 0;
+        if (edgeRight - right > left - edgeLeft) {
+            //向左滑动
+            distance = -(left - edgeLeft);
+        } else {
+            //像右滑动
+            distance = edgeRight - right;
+        }
+        //速度快变慢
+        if (distance != 0) {
+
+            ObjectAnimator animator = ObjectAnimator.ofInt(this, "moveToEdge", distance, 0);
+            animator.setInterpolator(new DecelerateInterpolator());
+
+            int finalDistance = distance;
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    moveToEdge = finalDistance;
+                }
+            });
+            animator.setDuration(500).start();
+        }
+    }
+
+    private int moveToEdge = 0;
+
+    public int getMoveToEdge() {
+        return moveToEdge;
+    }
+
+    public void setMoveToEdge(int moveToEdge) {
+        moveFloatView(this.moveToEdge - moveToEdge, 0);
+//        Log.d(TAG, "setMoveToEdge: " + (this.moveToEdge - moveToEdge));
+        this.moveToEdge = moveToEdge;
     }
 
     private void moveFloatView(float dx, float dy) {
@@ -281,6 +340,8 @@ public class FloatContainerLayout extends ViewGroup {
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
         lp.x += dx;
         lp.y += dy;
+//        Log.d(TAG, "moveFloatView dddd: " + dx + ":" + dy);
+//        Log.d(TAG, "moveFloatView lppp: " + lp.x + ":" + lp.x);
         requestLayout();
     }
 

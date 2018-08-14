@@ -8,6 +8,7 @@
     <codingbo.viewstudy.myLayout.FloatContainerLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:auto_edge="true"
         >
 
         <FrameLayout
@@ -24,31 +25,40 @@
 
         </FrameLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#DDFFFF"
-            android:orientation="vertical"
-            app:pos_x="10dp"
-            app:pos_y="10dp">
+        <!--<LinearLayout-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="#DDFFFF"-->
+        <!--android:orientation="vertical"-->
+        <!--app:pos_x="20dp"-->
+        <!--app:pos_y="20dp">-->
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="111111"/>
+        <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="111111"/>-->
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2222"/>
+        <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="2222"/>-->
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="333"/>
+        <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="333"/>-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/float_bg"
+            android:gravity="center"
+            android:text="AAA"
+            android:textColor="#ffffff"
+            app:pos_x="50dp"
+            app:pos_y="50dp"/>
 
     </codingbo.viewstudy.myLayout.FloatContainerLayout>
 
