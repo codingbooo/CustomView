@@ -3,63 +3,54 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <codingbo.viewstudy.myLayout.FloatContainerLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:auto_edge="true"
-        >
+        android:layout_height="200dp"/>
 
-        <FrameLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <codingbo.viewstudy.myLayout.FloatContainerLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#DDDDDD"
+            android:layout_margin="10dp"
+            android:background="#abcdef"
+            android:padding="10dp"
+            app:auto_edge="true"
             >
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:background="#DDDDDD"
+                android:padding="10dp"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="text"/>
+
+            </FrameLayout>
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity=""
-                android:text="text"/>
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/float_bg"
+                android:gravity="center"
+                android:text="AAA"
+                android:textColor="#ffffff"
+                app:pos_x="500dp"
+                app:pos_y="500dp"/>
 
-        </FrameLayout>
+        </codingbo.viewstudy.myLayout.FloatContainerLayout>
 
-        <!--<LinearLayout-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="#DDFFFF"-->
-        <!--android:orientation="vertical"-->
-        <!--app:pos_x="20dp"-->
-        <!--app:pos_y="20dp">-->
+    </LinearLayout>
 
-        <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="111111"/>-->
-
-        <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="2222"/>-->
-
-        <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="333"/>-->
-
-        <!--</LinearLayout>-->
-
-        <TextView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/float_bg"
-            android:gravity="center"
-            android:text="AAA"
-            android:textColor="#ffffff"
-            app:pos_x="50dp"
-            app:pos_y="50dp"/>
-
-    </codingbo.viewstudy.myLayout.FloatContainerLayout>
 
 </LinearLayout>

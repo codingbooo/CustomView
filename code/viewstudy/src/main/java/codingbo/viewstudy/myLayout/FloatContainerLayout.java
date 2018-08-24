@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -16,13 +17,13 @@ import codingbo.viewstudy.R;
 
 /**
  * 悬浮窗体容器类
- * todo 粘性
  *
  * @author bob
  */
 public class FloatContainerLayout extends ViewGroup {
     private static final String TAG = "FloatContainerLayout";
     public static final int CHILD_COUNT = 2;
+    public static final int AUTO_EDGE_DURATION = 300;
     private boolean isSliding = false;
     private float mLastX;
     private float mLastY;
@@ -149,60 +150,72 @@ public class FloatContainerLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        //l t r b 是父view的可用范围(全部范围(已经减去margin) - padding 等等) 相对坐标
         int count = getChildCount();
+
         if (count < CHILD_COUNT) {
             return;
         }
-        layoutMainView(getChildAt(0), l, t, r, b);
-        layoutFloatView(getChildAt(1), l, t, r, b);
+
+        final int parentLeft = getPaddingLeft();
+        final int parentRight = r - l - getPaddingRight();
+
+        final int parentTop = getPaddingTop();
+        final int parentBottom = b - t - getPaddingBottom();
+
+        layoutMainView(getChildAt(0), parentLeft, parentTop, parentRight, parentBottom);
+        layoutFloatView(getChildAt(1), parentLeft, parentTop, parentRight, parentBottom);
     }
 
     private void layoutFloatView(View child, int l, int t, int r, int b) {
-        final int edgeLeft = l + getPaddingLeft();
-        final int edgeTop = t + getPaddingTop();
-        final int edgeRight = r - getPaddingRight();
-        final int edgeBottom = b - getPaddingBottom();
-
         LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
         float x = lp.x;
         float y = lp.y;
 
-        int left = l + getPaddingLeft() + lp.leftMargin + (int) x;
-        int top = t + getPaddingTop() + lp.topMargin + (int) y;
+        int left = l + lp.leftMargin + (int) x;
+        int top = t + lp.topMargin + (int) y;
 
         //边界判断
-        left = left < edgeLeft ? edgeLeft : left;
-        top = top < edgeTop ? edgeTop : top;
+        left = left < l ? l : left;
+        top = top < t ? t : top;
 
         int right = left + child.getMeasuredWidth();
         int bottom = top + child.getMeasuredHeight();
 
-//        Log.d(TAG, "layoutFloatView111: " + left + ":" + top + ":" + right + ":" + bottom);
-
-        right = right > edgeRight ? edgeRight : right;
-        bottom = bottom > edgeBottom ? edgeBottom : bottom;
+        right = right > r ? r : right;
+        bottom = bottom > b ? b : bottom;
 
         left = right - child.getMeasuredWidth();
-        left = left < edgeLeft ? edgeLeft : left;
+        left = left < l ? l : left;
 
         top = bottom - child.getMeasuredHeight();
-        top = top < edgeTop ? edgeTop : top;
-
-//        Log.d(TAG, "layoutFloatView222: " + left + ":" + top + ":" + right + ":" + bottom);
+        top = top < t ? t : top;
 
         child.layout(left, top, right, bottom);
     }
 
     private void layoutMainView(View child, int l, int t, int r, int b) {
-        int height = child.getMeasuredHeight();
-        int width = child.getMeasuredWidth();
-        LayoutParams lp = (LayoutParams) child.getLayoutParams();
-        int left = l + getPaddingLeft() + lp.leftMargin;
-        int top = t + getPaddingTop() + lp.topMargin;
-        int right = r - getPaddingRight() - lp.rightMargin;
-        int bottom = b - getPaddingBottom() - lp.bottomMargin;
 
+        int width = child.getMeasuredWidth();
+        int height = child.getMeasuredHeight();
+        LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        int left = l + lp.leftMargin;
+        int top = t + lp.topMargin;
+
+        int right = left + width;
+        int bottom = top + height;
+
+        int parentR = r - lp.rightMargin;
+        int parentB = b - lp.bottomMargin;
+
+        right = right > parentR ? parentR : right;
+        bottom = bottom > parentB ? parentB : bottom;
+
+        Log.d(TAG, "left: " + left);
+        Log.d(TAG, "top: " + top);
+        Log.d(TAG, "right: " + right);
+        Log.d(TAG, "bottom: " + bottom);
         child.layout(left, top, right, bottom);
     }
 
@@ -316,7 +329,7 @@ public class FloatContainerLayout extends ViewGroup {
                     moveToEdge = finalDistance;
                 }
             });
-            animator.setDuration(500).start();
+            animator.setDuration(AUTO_EDGE_DURATION).start();
         }
     }
 
