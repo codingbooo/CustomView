@@ -66,4 +66,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+
+    public void showMore(View view){
+        goActivity(ShowMoreActivity.class);
+    }
 }

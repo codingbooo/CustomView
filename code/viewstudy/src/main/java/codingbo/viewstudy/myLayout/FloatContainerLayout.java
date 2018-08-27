@@ -17,6 +17,7 @@ import codingbo.viewstudy.R;
 
 /**
  * 悬浮窗体容器类
+ * todo 双指缩放 FloatView
  *
  * @author bob
  */
