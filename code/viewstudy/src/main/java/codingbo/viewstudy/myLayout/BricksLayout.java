@@ -1,15 +1,21 @@
 package codingbo.viewstudy.myLayout;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+
+import codingbo.viewstudy.R;
 
 /**
  * 砖头布局
  */
 public class BricksLayout extends ViewGroup {
+    public static final int DEFAULT_ITEM_GAP = 20;
 
+
+    private int mItemGap = DEFAULT_ITEM_GAP;
 
     public BricksLayout(Context context) {
         this(context, null);
@@ -21,6 +27,9 @@ public class BricksLayout extends ViewGroup {
 
     public BricksLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.BricksLayout);
+        mItemGap = (int) ta.getDimension(R.styleable.BricksLayout_item_gap, DEFAULT_ITEM_GAP);
+        ta.recycle();
     }
 
     @Override
@@ -36,6 +45,15 @@ public class BricksLayout extends ViewGroup {
         setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
     }
 
+
+    public int getItemGap() {
+        return mItemGap;
+    }
+
+    public void setItemGap(int itemGap) {
+        mItemGap = itemGap;
+        requestLayout();
+    }
 
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
@@ -84,12 +102,12 @@ public class BricksLayout extends ViewGroup {
 
             if (outBound) {
                 // 单个或多个 超过父view宽度
-                usedHeight += maxRowHeight;
+                usedHeight += maxRowHeight + mItemGap;
 
                 left = paddingLeft + lp.leftMargin;
                 top = usedHeight + lp.topMargin;
 
-                usedWidth = paddingLeft + cWAndMargin;
+                usedWidth = paddingLeft + cWAndMargin + mItemGap;
                 maxRowHeight = cHAndMargin;
             } else {
                 // 多个 不超过父view宽度
@@ -97,7 +115,7 @@ public class BricksLayout extends ViewGroup {
                 top = usedHeight + lp.topMargin;
 
                 maxRowHeight = maxRowHeight > cHAndMargin ? maxRowHeight : cHAndMargin;
-                usedWidth += cWAndMargin;
+                usedWidth += cWAndMargin + mItemGap;
             }
 
             right = left + cW;

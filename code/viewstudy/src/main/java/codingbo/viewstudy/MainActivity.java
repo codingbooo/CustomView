@@ -6,13 +6,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.SeekBar;
 
+import codingbo.viewstudy.myLayout.BricksLayout;
 import codingbo.viewstudy.touchConflict.LayoutActivity;
 import codingbo.viewstudy.touchConflict.ScrollActivity;
 import codingbo.viewstudy.windowFloat.FloatService;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    private BricksLayout mBricksLayout;
+    private SeekBar mSeekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,29 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "xdpi: " + xdpi);
         float ydpi = getResources().getDisplayMetrics().ydpi;
         Log.d(TAG, "ydpi: " + ydpi);
+
+        mSeekBar = findViewById(R.id.seekBar);
+        mSeekBar.setMax(100);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.d(TAG, "onProgressChanged: " + progress);
+                
+                mBricksLayout.setItemGap(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        mBricksLayout = findViewById(R.id.bricksLayout);
 
     }
 
@@ -67,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void showMore(View view){
+    public void showMore(View view) {
         goActivity(ShowMoreActivity.class);
     }
 }
