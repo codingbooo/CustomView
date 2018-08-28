@@ -75,24 +75,29 @@ public class BricksLayout extends ViewGroup {
             cW = child.getMeasuredWidth();
             cH = child.getMeasuredHeight();
 
-            if (cW + usedWidth > maxWidth) {
+            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+            final int cHAndMargin = cH + lp.topMargin + lp.bottomMargin;
+            final int cWAndMargin = cW + lp.leftMargin + lp.rightMargin;
+
+            //超出范围
+            boolean outBound = usedWidth + cWAndMargin > maxWidth;
+
+            if (outBound) {
                 // 单个或多个 超过父view宽度
                 usedHeight += maxRowHeight;
 
-                left = paddingLeft;
-                top = usedHeight;
+                left = paddingLeft + lp.leftMargin;
+                top = usedHeight + lp.topMargin;
 
-                usedWidth = paddingLeft + cW;
-//                maxRowHeight = maxRowHeight > cH ? maxRowHeight : cH;
-
-                maxRowHeight = cH;
+                usedWidth = paddingLeft + cWAndMargin;
+                maxRowHeight = cHAndMargin;
             } else {
                 // 多个 不超过父view宽度
-                left = usedWidth;
-                top = top;
+                left = usedWidth + lp.leftMargin;
+                top = usedHeight + lp.topMargin;
 
-                maxRowHeight = maxRowHeight > cH ? maxRowHeight : cH;
-                usedWidth += cW;
+                maxRowHeight = maxRowHeight > cHAndMargin ? maxRowHeight : cHAndMargin;
+                usedWidth += cWAndMargin;
             }
 
             right = left + cW;

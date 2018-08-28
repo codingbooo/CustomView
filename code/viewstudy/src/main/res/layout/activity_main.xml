@@ -6,14 +6,15 @@
     <codingbo.viewstudy.myLayout.BricksLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="30dp"
-        android:padding="30dp"
+        android:layout_margin="10dp"
+        android:padding="20dp"
         >
 
         <Button
             android:id="@+id/bt_thumb"
             android:layout_width="wrap_content"
             android:layout_height="150dp"
+            android:layout_margin="50dp"
             android:onClick="thumb"
             android:text="thumb"/>
 
@@ -29,6 +30,7 @@
             android:id="@+id/bt_3"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_margin="10dp"
             android:onClick="touch"
             android:text="touch"
             />
@@ -61,61 +63,3 @@
 
 
 </LinearLayout>
-
-
-    <!--<android.support.constraint.ConstraintLayout-->
-    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-    <!--xmlns:tools="http://schemas.android.com/tools"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--tools:context="codingbo.viewstudy.MainActivity">-->
-
-
-    <!--<Button-->
-    <!--android:id="@+id/bt_thumb"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:onClick="thumb"-->
-    <!--android:text="thumb"/>-->
-
-    <!--<Button-->
-    <!--android:id="@+id/bt_2"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:onClick="view3d"-->
-    <!--android:text="view3d"-->
-    <!--app:layout_constraintTop_toBottomOf="@id/bt_thumb"/>-->
-
-    <!--<Button-->
-    <!--android:id="@+id/bt_3"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:onClick="touch"-->
-    <!--android:text="touch"-->
-    <!--app:layout_constraintTop_toBottomOf="@id/bt_2"/>-->
-
-    <!--<Button-->
-    <!--android:id="@+id/bt_4"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:onClick="floatView"-->
-    <!--android:text="float"-->
-    <!--app:layout_constraintTop_toBottomOf="@id/bt_3"/>-->
-
-    <!--<Button-->
-    <!--android:id="@+id/bt_5"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:onClick="floatView2"-->
-    <!--android:text="float2"-->
-    <!--app:layout_constraintTop_toBottomOf="@id/bt_4"/>-->
-
-    <!--<Button-->
-    <!--android:id="@+id/bt_6"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:onClick="showMore"-->
-    <!--android:text="showMoreView"-->
-    <!--app:layout_constraintTop_toBottomOf="@id/bt_5"/>-->
-    <!--</android.support.constraint.ConstraintLayout>-->
