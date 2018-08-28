@@ -49,20 +49,22 @@ public class BricksLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int usedWidth = 0;
-        int usedHeight = 0;
+        final int paddingLeft = getPaddingLeft();
+        final int paddingTop = getPaddingTop();
+        final int maxWidth = getMeasuredWidth() - getPaddingStart() - getPaddingEnd();
+
+        int usedWidth = paddingLeft;
+        int usedHeight = paddingTop;
 
         int maxRowHeight = 0;
 
-        int left = 0;
-        int top = 0;
-        int right = 0;
-        int bottom = 0;
+        int left = paddingLeft;
+        int top = paddingTop;
+        int right;
+        int bottom;
 
         int cW;
         int cH;
-
-        int maxWidth = getMeasuredWidth();
 
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
@@ -77,12 +79,13 @@ public class BricksLayout extends ViewGroup {
                 // 单个或多个 超过父view宽度
                 usedHeight += maxRowHeight;
 
-                left = 0;
+                left = paddingLeft;
                 top = usedHeight;
 
-                maxRowHeight = cH;
-                usedWidth = cW;
+                usedWidth = paddingLeft + cW;
+//                maxRowHeight = maxRowHeight > cH ? maxRowHeight : cH;
 
+                maxRowHeight = cH;
             } else {
                 // 多个 不超过父view宽度
                 left = usedWidth;
