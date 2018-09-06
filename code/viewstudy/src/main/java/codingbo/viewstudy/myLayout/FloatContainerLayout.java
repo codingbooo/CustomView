@@ -221,6 +221,15 @@ public class FloatContainerLayout extends ViewGroup {
     }
 
     @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        int count = getChildCount();
+        if (count > CHILD_COUNT) {
+            throw new RuntimeException("FloatContainerLayout only can container 2 elements");
+        }
+    }
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         if (!isSliding && !touchInFloatView(event)) {
             return false;
