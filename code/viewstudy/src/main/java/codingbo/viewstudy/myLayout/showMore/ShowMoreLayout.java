@@ -1,5 +1,6 @@
 package codingbo.viewstudy.myLayout.showMore;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -26,6 +27,7 @@ public class ShowMoreLayout extends ViewGroup {
     private int mOffsetY;
     private float mLastX;
     private float mLastY;
+    private ShowMoreDefaultHeader mHeader;
 
 
     public ShowMoreLayout(Context context) {
@@ -52,23 +54,13 @@ public class ShowMoreLayout extends ViewGroup {
         mContentView = mContent;
 
 
-        ImageView headerView = getHeaderView(getContext());
+        mHeader = ShowMoreDefaultHeader.getInstance(getContext());
+        View headerView = mHeader.getView();
         mHeaderView = headerView;
 
         addView(headerView);
     }
 
-    @NonNull
-    private ImageView getHeaderView(Context context) {
-        ImageView imageView = new ImageView(context);
-        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 300);
-        imageView.setLayoutParams(params);
-        Drawable drawable = context.getResources().getDrawable(R.drawable.ic_refresh);
-        imageView.setImageDrawable(drawable);
-        imageView.setBackgroundColor(Color.WHITE);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        return imageView;
-    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -105,7 +97,7 @@ public class ShowMoreLayout extends ViewGroup {
         top = -mHeaderHeight + mOffsetY;
         bottom = mOffsetY;
 
-
+        mHeader.onPosition(mOffsetY, mHeaderHeight);
         header.layout(left, top, right, bottom);
 
     }
@@ -131,6 +123,7 @@ public class ShowMoreLayout extends ViewGroup {
                 break;
             case MotionEvent.ACTION_UP:
 
+                moveToNormalPosY();
 
                 break;
             default:
@@ -143,10 +136,31 @@ public class ShowMoreLayout extends ViewGroup {
         return true;
     }
 
+    private void moveToNormalPosY() {
+        ObjectAnimator animator = ObjectAnimator.ofInt(this, "offsetY", mOffsetY, 0);
+        animator.setDuration(500);
+        animator.start();
+    }
+
     private void moveY(float dy) {
         mOffsetY += dy;
+
+        mOffsetY = mOffsetY >= mHeaderHeight ? mHeaderHeight : mOffsetY;
+        mOffsetY = mOffsetY <= 0 ? 0 : mOffsetY;
+
         requestLayout();
     }
+
+
+    public int getOffsetY() {
+        return mOffsetY;
+    }
+
+    public void setOffsetY(int offsetY) {
+        mOffsetY = offsetY;
+        requestLayout();
+    }
+
 
     public void showRefreshView(boolean show) {
 
