@@ -10,12 +10,22 @@ import android.view.View;
  */
 public interface ShowMoreHeader {
     /**
-     * 回调 当前位置
+     *  todo 这个接口应该怎么定义
+     *
+     * 回调当前状态
+     *
+     * @param status 刷新状态
+     * @param y      垂直位置
+     * @param max    垂直最大位置
+     *               <p>
+     *               <p>
+     * @see ShowMoreLayout
      */
-    void onPosition(int y, int max);
+    void onStatus(int status, int y, int max);
 
     /**
      * 返回一个View实例
      */
     View getView();
+
 }

@@ -2,16 +2,10 @@ package codingbo.viewstudy.myLayout.showMore;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import codingbo.viewstudy.R;
 
 /**
  * 上拉刷新 下拉加载
@@ -19,7 +13,14 @@ import codingbo.viewstudy.R;
  */
 public class ShowMoreLayout extends ViewGroup {
 
-//    ImageView mHeaderView;
+    /**
+     * 正常状态
+     */
+    public static final int STATUS_NORMAL = 0;
+    /**
+     * 下拉刷新状态
+     */
+    public static final int STATUS_REFRESHING = 2;
 
     private View mHeaderView;
     private View mContentView;
@@ -97,7 +98,7 @@ public class ShowMoreLayout extends ViewGroup {
         top = -mHeaderHeight + mOffsetY;
         bottom = mOffsetY;
 
-        mHeader.onPosition(mOffsetY, mHeaderHeight);
+        mHeader.onStatus(STATUS_REFRESHING, mOffsetY, mHeaderHeight);
         header.layout(left, top, right, bottom);
 
     }
@@ -137,7 +138,8 @@ public class ShowMoreLayout extends ViewGroup {
     }
 
     private void moveToNormalPosY() {
-        ObjectAnimator animator = ObjectAnimator.ofInt(this, "offsetY", mOffsetY, 0);
+        ObjectAnimator animator = ObjectAnimator.ofInt(this,
+                "offsetY", mOffsetY, 0);
         animator.setDuration(500);
         animator.start();
     }
@@ -162,6 +164,9 @@ public class ShowMoreLayout extends ViewGroup {
     }
 
 
+    /**
+     * 显示刷新界面
+     */
     public void showRefreshView(boolean show) {
 
     }

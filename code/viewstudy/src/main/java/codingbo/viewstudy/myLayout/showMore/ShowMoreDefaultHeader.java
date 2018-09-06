@@ -75,8 +75,9 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
 
 
     @Override
-    public void onPosition(int y, int max) {
-        Log.d(TAG, "onPosition: " + y);
+    public void onStatus(int status, int y, int max) {
+
+        Log.d(TAG, "onStatus: " + y);
         mIv.setRotation(y);
 
         setRotation(y == max);
