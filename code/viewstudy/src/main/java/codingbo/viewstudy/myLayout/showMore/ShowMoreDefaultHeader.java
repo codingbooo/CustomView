@@ -1,7 +1,9 @@
 package codingbo.viewstudy.myLayout.showMore;
 
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,6 +38,8 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
 
         mLayout.addView(mIv);
         mLayout.addView(mTv);
+
+//        mLayout.setOnClickListener(v -> setRotation(true));
     }
 
     private TextView getTextView(Context context) {
@@ -65,6 +69,7 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
         layout.setLayoutParams(params);
         layout.setGravity(Gravity.CENTER);
         layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setBackgroundColor(Color.GRAY);
         layout.setPadding(0, 100, 0, 100);
         return layout;
     }
@@ -75,23 +80,33 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
 
 
     @Override
-    public void onStatus(int status, int y, int max) {
-
-        Log.d(TAG, "onStatus: " + y);
-        mIv.setRotation(y);
-
-        setRotation(y == max);
+    public void onDragging(int status, int y, int max) {
+        float degree = (float) y / max * 360;
+        mIv.setRotation(degree);
     }
 
-    private void setRotation(boolean b) {
+    @Override
+    public void onStatusChanged(int status, int oldStatus) {
+        setRotation(status == ShowMoreLayout.STATUS_REFRESHING);
+    }
+
+    private void setRotation(boolean rotation) {
+        if (!rotation) {
+            if (mAnimator != null && mAnimator.isRunning()) {
+                mAnimator.cancel();
+            }
+            return;
+        }
+
         if (mAnimator == null) {
             mAnimator = ObjectAnimator.ofFloat(mIv, "rotation", 0, 360);
-        }
-        if (b && !mAnimator.isRunning()) {
             mAnimator.setDuration(500);
+            mAnimator.setRepeatMode(ValueAnimator.RESTART);
+            mAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        }
+
+        if (!mAnimator.isRunning()) {
             mAnimator.start();
-        } else if (!b && mAnimator.isRunning()) {
-            mAnimator.cancel();
         }
     }
 

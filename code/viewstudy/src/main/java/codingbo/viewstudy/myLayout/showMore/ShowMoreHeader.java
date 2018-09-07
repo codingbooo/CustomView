@@ -10,18 +10,31 @@ import android.view.View;
  */
 public interface ShowMoreHeader {
     /**
-     *  todo 这个接口应该怎么定义
+     * 拖拽进度
      *
-     * 回调当前状态
-     *
-     * @param status 刷新状态
-     * @param y      垂直位置
-     * @param max    垂直最大位置
-     *               <p>
-     *               <p>
-     * @see ShowMoreLayout
+     * @param y    垂直位置
+     * @param maxY 垂直最大位置
      */
-    void onStatus(int status, int y, int max);
+    void onDragging(int status, int y, int maxY);
+
+
+    /**
+     * <h2>状态改变</h2>
+     * <p>
+     * 状态类型:
+     * <p>
+     * {@link ShowMoreLayout#STATUS_NORMAL}正常状态
+     * <p>
+     * {@link ShowMoreLayout#STATUS_DRAGGING}下拉状态
+     * <p>
+     * {@link ShowMoreLayout#STATUS_REFRESHING}刷新状态
+     * <p>
+     * {@link ShowMoreLayout#STATUS_FINISH}完成回收状态
+     *
+     * @param status    当前状态
+     * @param oldStatus 上个状态
+     */
+    void onStatusChanged(int status, int oldStatus);
 
     /**
      * 返回一个View实例

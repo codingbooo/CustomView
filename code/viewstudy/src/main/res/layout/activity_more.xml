@@ -7,24 +7,17 @@
     android:orientation="vertical">
 
     <codingbo.viewstudy.myLayout.showMore.ShowMoreLayout
+        android:id="@+id/sml"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         >
 
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="DATA"
-                android:textSize="30sp"/>
-
-        </LinearLayout>
+            android:background="#ffffff"/>
 
     </codingbo.viewstudy.myLayout.showMore.ShowMoreLayout>
 
@@ -35,7 +28,8 @@
         android:padding="10dp"
         >
 
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#aaffaa"/>
