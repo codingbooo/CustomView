@@ -36,7 +36,7 @@ public class ShowMoreActivity extends AppCompatActivity {
         sml.setShowMoreListener(new ShowMoreLayout.ShowMoreListener() {
             @Override
             public void onRefresh(ShowMoreLayout showMoreLayout) {
-                sml.postDelayed(() -> showMoreLayout.showRefreshView(false), 1000);
+                sml.postDelayed(() -> showMoreLayout.showRefreshView(false), 3000);
             }
 
             @Override

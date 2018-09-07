@@ -115,35 +115,39 @@ public class ShowMoreLayout extends ViewGroup {
 
     }
 
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-//        return super.onInterceptTouchEvent(ev);
-
-        boolean result = false;
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                result = false;
-                break;
-            case MotionEvent.ACTION_MOVE:
-
-                result = true;
-                break;
-            case MotionEvent.ACTION_UP:
-
-                result = false;
-                break;
-            default:
-                break;
-        }
-        return result;
-    }
+//    @Override
+//    public boolean onInterceptTouchEvent(MotionEvent ev) {
+////        return super.onInterceptTouchEvent(ev);
+//
+//        if (mContentView.canScrollVertically(-1)) {
+//            return false;
+//        }
+//
+//        boolean result = false;
+//        switch (ev.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                result = false;
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//
+//                result = true;
+//                break;
+//            case MotionEvent.ACTION_UP:
+//
+//                result = false;
+//                break;
+//            default:
+//                break;
+//        }
+//        return result;
+//    }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
 //        return super.onTouchEvent(event);
-        if (mCurrentStatus == STATUS_REFRESHING) {
-            return false;
-        }
+//        if (mCurrentStatus == STATUS_REFRESHING) {
+//            return false;
+//        }
         float x = ev.getX();
         float y = ev.getY();
         switch (ev.getAction()) {
@@ -157,11 +161,13 @@ public class ShowMoreLayout extends ViewGroup {
                 statusChanged(STATUS_DRAGGING);
                 break;
             case MotionEvent.ACTION_UP:
-                if (mOffsetY >= mHeaderHeight) {
+                if (mOffsetY >= mHeaderHeight / 3 * 2) {
                     moveToHeaderOpen();
                 } else {
                     moveToHeaderClose();
                 }
+                mLastX = 0;
+                mLastY = 0;
                 break;
             default:
                 break;
@@ -184,6 +190,7 @@ public class ShowMoreLayout extends ViewGroup {
             }
         });
         animator.start();
+        statusChanged(STATUS_DRAGGING);
     }
 
     private void moveToHeaderClose() {
@@ -193,10 +200,11 @@ public class ShowMoreLayout extends ViewGroup {
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                statusChanged(STATUS_DRAGGING);
+                statusChanged(STATUS_NORMAL);
             }
         });
         animator.start();
+        statusChanged(STATUS_DRAGGING);
     }
 
     private void moveY(float dy) {
