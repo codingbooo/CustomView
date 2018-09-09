@@ -4,8 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.support.v4.view.NestedScrollingParentHelper;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,7 +16,6 @@ import android.view.ViewGroup;
  * 分体式
  */
 public class ShowMoreLayout extends ViewGroup {
-
     /**
      * 正常状态
      */
@@ -31,7 +32,7 @@ public class ShowMoreLayout extends ViewGroup {
      * 完成回收状态
      */
     public static final int STATUS_FINISH = 3;
-
+    private static final String TAG = "ShowMoreLayout";
     private int mCurrentStatus = STATUS_NORMAL;
 
     private View mHeaderView;
@@ -41,7 +42,10 @@ public class ShowMoreLayout extends ViewGroup {
     private float mLastX;
     private float mLastY;
     private ShowMoreDefaultHeader mHeader;
-
+    private ShowMoreListener mShowMoreListener;
+    private ObjectAnimator mHeaderCloseAnimator;
+    private ObjectAnimator mHeaderOpenAnimator;
+    private NestedScrollingParentHelper mScrollingParentHelper;
 
     public ShowMoreLayout(Context context) {
         this(context, null);
@@ -53,7 +57,50 @@ public class ShowMoreLayout extends ViewGroup {
 
     public ShowMoreLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+//        mScrollingParentHelper = new NestedScrollingParentHelper(this);
+    }
 
+    @Override
+    public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
+//        return super.onStartNestedScroll(child, target, nestedScrollAxes);
+        return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+    }
+
+    @Override
+    public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+        // target 请求滑动的子view(这里并不一定是mContentView，有可能是mContentView的子View)
+        // dx dy  请求滑动的像素点
+        // consumed 返回子view可滑动的距离。长度为2的数组，角标0代表x轴，角标1代表y轴
+
+//        super.onNestedPreScroll(target, dx, dy, consumed);
+//        Log.d(TAG, "onNestedPreScroll: dx :" + dx);
+        Log.d(TAG, "onNestedPreScroll: dy :" + dy);
+//        Log.d(TAG, "onNestedPreScroll: consumed :" + Arrays.toString(consumed));
+
+        //子view是否能向下滑动
+        boolean childCanScrollDown = target.canScrollVertically(-1);
+        Log.d(TAG, "onNestedPreScroll canScrollVertically: " + childCanScrollDown);
+
+        consumed[0] = dx;
+        boolean intercept = !childCanScrollDown || mOffsetY >= 0;
+        Log.d(TAG, "onNestedPreScroll intercept: " + intercept);
+        if (intercept) {
+            //拦截滑动事件;
+            post(() -> moveY(-dy));
+            consumed[1] = 0;
+        } else {
+            //不拦截滑动事件
+            consumed[1] = dy;
+        }
+    }
+
+    @Override
+    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
+//        Log.d(TAG, "onNestedFling: velocity X:" + velocityX);
+//        Log.d(TAG, "onNestedFling: velocity Y:" + velocityY);
+//        Log.d(TAG, "onNestedFling: consumed :" + consumed);
+//        moveY(dy);
+        return super.onNestedFling(target, velocityX, velocityY, consumed);
 
     }
 
@@ -61,7 +108,7 @@ public class ShowMoreLayout extends ViewGroup {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        //健壮性判断
+        //TODO 健壮性判断
         View mContent = getChildAt(0);
 
         mContentView = mContent;
@@ -73,7 +120,6 @@ public class ShowMoreLayout extends ViewGroup {
 
         addView(headerView);
     }
-
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -101,6 +147,41 @@ public class ShowMoreLayout extends ViewGroup {
 
     }
 
+//    @Override
+//    public boolean onInterceptTouchEvent(MotionEvent ev) {
+////        return super.onInterceptTouchEvent(ev);
+//
+//
+////        Log.d(TAG, "onInterceptTouchEvent child can ScrollVertically: "
+////                + mContentView.canScrollVertically(-1));
+//        if (mContentView.canScrollVertically(-1)) {
+//            return false;
+//        }
+//        float x = ev.getX();
+//        float y = ev.getY();
+//        boolean result = false;
+//        switch (ev.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//
+//                result = false;
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                float dx = x - mLastX;
+//                float dy = y - mLastY;
+//                result = dy > 0;
+//                break;
+//            case MotionEvent.ACTION_UP:
+//
+//                result = false;
+//                break;
+//            default:
+//                break;
+//        }
+//        mLastX = x;
+//        mLastY = y;
+//        return result;
+//    }
+
     private void layoutHeader(View header, int l, int t, int r, int b) {
         int left = 0;
         int top = 0;
@@ -114,96 +195,87 @@ public class ShowMoreLayout extends ViewGroup {
         header.layout(left, top, right, bottom);
 
     }
-
+//
 //    @Override
-//    public boolean onInterceptTouchEvent(MotionEvent ev) {
-////        return super.onInterceptTouchEvent(ev);
-//
-//        if (mContentView.canScrollVertically(-1)) {
-//            return false;
-//        }
-//
-//        boolean result = false;
+//    public boolean onTouchEvent(MotionEvent ev) {
+////        return super.onTouchEvent(event);
+////        if (mCurrentStatus == STATUS_REFRESHING) {
+////            return false;
+////        }
+//        float x = ev.getX();
+//        float y = ev.getY();
 //        switch (ev.getAction()) {
 //            case MotionEvent.ACTION_DOWN:
-//                result = false;
+//
 //                break;
 //            case MotionEvent.ACTION_MOVE:
-//
-//                result = true;
+//                float dx = x - mLastX;
+//                float dy = y - mLastY;
+//                moveY(dy);
+//                statusChanged(STATUS_DRAGGING);
 //                break;
 //            case MotionEvent.ACTION_UP:
-//
-//                result = false;
+//                if (mOffsetY >= mHeaderHeight / 3 * 2) {
+//                    moveToHeaderOpen();
+//                } else {
+//                    moveToHeaderClose();
+//                }
+//                mLastX = 0;
+//                mLastY = 0;
 //                break;
 //            default:
 //                break;
 //        }
-//        return result;
+//
+//        mLastX = x;
+//        mLastY = y;
+//
+//        return true;
 //    }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-//        return super.onTouchEvent(event);
-//        if (mCurrentStatus == STATUS_REFRESHING) {
-//            return false;
-//        }
-        float x = ev.getX();
-        float y = ev.getY();
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-
-                break;
-            case MotionEvent.ACTION_MOVE:
-                float dx = x - mLastX;
-                float dy = y - mLastY;
-                moveY(dy);
-                statusChanged(STATUS_DRAGGING);
-                break;
-            case MotionEvent.ACTION_UP:
-                if (mOffsetY >= mHeaderHeight / 3 * 2) {
-                    moveToHeaderOpen();
-                } else {
-                    moveToHeaderClose();
-                }
-                mLastX = 0;
-                mLastY = 0;
-                break;
-            default:
-                break;
+    private void moveToHeaderOpen() {
+        if (mOffsetY == mHeaderHeight) {
+            statusChanged(STATUS_REFRESHING);
+            return;
         }
 
-        mLastX = x;
-        mLastY = y;
+        if (mHeaderOpenAnimator != null && mHeaderOpenAnimator.isRunning()) {
+            mHeaderOpenAnimator.cancel();
+        }
 
-        return true;
-    }
-
-    private void moveToHeaderOpen() {
-        ObjectAnimator animator = ObjectAnimator.ofInt(this,
+        mHeaderOpenAnimator = ObjectAnimator.ofInt(this,
                 "offsetY", mOffsetY, mHeaderHeight);
-        animator.setDuration(500);
-        animator.addListener(new AnimatorListenerAdapter() {
+        mHeaderOpenAnimator.setDuration(500);
+        mHeaderOpenAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 statusChanged(STATUS_REFRESHING);
             }
         });
-        animator.start();
+        mHeaderOpenAnimator.start();
         statusChanged(STATUS_DRAGGING);
     }
 
     private void moveToHeaderClose() {
-        ObjectAnimator animator = ObjectAnimator.ofInt(this,
+        if (mOffsetY == 0) {
+            statusChanged(STATUS_NORMAL);
+            return;
+        }
+
+        if (mHeaderCloseAnimator != null && mHeaderCloseAnimator.isRunning()) {
+            mHeaderCloseAnimator.cancel();
+        }
+
+        mHeaderCloseAnimator = ObjectAnimator.ofInt(this,
                 "offsetY", mOffsetY, 0);
-        animator.setDuration(300);
-        animator.addListener(new AnimatorListenerAdapter() {
+        mHeaderCloseAnimator.setDuration(300);
+        mHeaderCloseAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 statusChanged(STATUS_NORMAL);
             }
         });
-        animator.start();
+        mHeaderCloseAnimator.start();
         statusChanged(STATUS_DRAGGING);
     }
 
@@ -216,28 +288,28 @@ public class ShowMoreLayout extends ViewGroup {
         requestLayout();
     }
 
-
     public int getOffsetY() {
         return mOffsetY;
     }
 
     public void setOffsetY(int offsetY) {
+        if (mOffsetY == offsetY) {
+            return;
+        }
         mOffsetY = offsetY;
         requestLayout();
     }
 
     private void statusChanged(int status) {
-
         if (status != mCurrentStatus) {
             mHeader.onStatusChanged(status, mCurrentStatus);
             mCurrentStatus = status;
         }
 
-        if (mShowMoreListener != null) {
+        if (mShowMoreListener != null && mCurrentStatus == STATUS_REFRESHING) {
             mShowMoreListener.onRefresh(this);
         }
     }
-
 
     /**
      * 显示刷新界面
@@ -253,8 +325,6 @@ public class ShowMoreLayout extends ViewGroup {
     public void showMoreView(boolean show) {
 
     }
-
-    private ShowMoreListener mShowMoreListener;
 
     public void setShowMoreListener(ShowMoreListener showMoreListener) {
         mShowMoreListener = showMoreListener;

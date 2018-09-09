@@ -16,16 +16,16 @@ import android.widget.TextView;
 import codingbo.viewstudy.R;
 
 /**
- * Created by bob
- * on 2018/9/6.
+ * 默认Header
  *
  * @author bob
  */
 public class ShowMoreDefaultHeader implements ShowMoreHeader {
     private static final String TAG = "ShowMoreDefaultHeader";
-    private LinearLayout mLayout;
+    private boolean mRotation = true;
     private final ImageView mIv;
     private final TextView mTv;
+    private LinearLayout mLayout;
     private ObjectAnimator mAnimator;
 
     public ShowMoreDefaultHeader(Context context) {
@@ -39,12 +39,19 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
         mLayout.addView(mIv);
         mLayout.addView(mTv);
 
-//        mLayout.setOnClickListener(v -> setRotation(true));
+//        mLayout.setOnClickListener(v -> {
+//            setRotation(mRotation = !mRotation);
+//        });
+    }
+
+    public static ShowMoreDefaultHeader getInstance(Context context) {
+        return new ShowMoreDefaultHeader(context);
     }
 
     private TextView getTextView(Context context) {
         TextView tv = new TextView(context);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         tv.setLayoutParams(params);
         tv.setText("加载数据...");
@@ -53,7 +60,8 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
 
     private ImageView getImageView(Context context) {
         ImageView imageView = new ImageView(context);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         imageView.setLayoutParams(params);
         Drawable drawable = context.getResources().getDrawable(R.drawable.ic_refresh);
@@ -64,7 +72,8 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
 
     private LinearLayout getLayout(Context context) {
         LinearLayout layout = new LinearLayout(context);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         layout.setLayoutParams(params);
         layout.setGravity(Gravity.CENTER);
@@ -73,11 +82,6 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
         layout.setPadding(0, 100, 0, 100);
         return layout;
     }
-
-    public static ShowMoreDefaultHeader getInstance(Context context) {
-        return new ShowMoreDefaultHeader(context);
-    }
-
 
     @Override
     public void onDragging(int status, int y, int max) {
@@ -92,12 +96,15 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
 
     private void setRotation(boolean rotation) {
         if (!rotation) {
+            //取消动画
             if (mAnimator != null && mAnimator.isRunning()) {
                 mAnimator.cancel();
+                Log.d(TAG, "stop Rotation");
             }
             return;
         }
 
+        //保持动画
         if (mAnimator == null) {
             mAnimator = ObjectAnimator.ofFloat(mIv, "rotation", 0, 360);
             mAnimator.setDuration(500);

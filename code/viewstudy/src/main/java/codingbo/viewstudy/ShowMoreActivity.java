@@ -24,6 +24,9 @@ public class ShowMoreActivity extends AppCompatActivity {
     private ShowMoreLayout sml;
     private RecyclerView mRecyclerView;
     private RecyclerView mRecyclerView2;
+    private TextView mTvEmpty;
+
+
     private ArrayList<String> mList;
     private Adapter mAdapter;
 
@@ -32,11 +35,18 @@ public class ShowMoreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more);
         sml = findViewById(R.id.sml);
+        mTvEmpty = findViewById(R.id.tv_empty);
 
         sml.setShowMoreListener(new ShowMoreLayout.ShowMoreListener() {
             @Override
             public void onRefresh(ShowMoreLayout showMoreLayout) {
-                sml.postDelayed(() -> showMoreLayout.showRefreshView(false), 3000);
+                sml.postDelayed(() -> {
+                    showMoreLayout.showRefreshView(false);
+                    refreshData(mList);
+                    mAdapter.notifyDataSetChanged();
+                }, 3000);
+
+
             }
 
             @Override
