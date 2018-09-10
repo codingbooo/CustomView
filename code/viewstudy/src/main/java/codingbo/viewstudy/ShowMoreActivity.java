@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import codingbo.viewstudy.myLayout.showMore.ShowMoreLayout;
+import codingbo.viewstudy.myLayout.showMore.ShowMoreLayout2;
 
 /**
  * Created by bob
@@ -21,7 +22,7 @@ import codingbo.viewstudy.myLayout.showMore.ShowMoreLayout;
  */
 public class ShowMoreActivity extends AppCompatActivity {
 
-    private ShowMoreLayout sml;
+    private ShowMoreLayout2 sml;
     private RecyclerView mRecyclerView;
     private RecyclerView mRecyclerView2;
     private TextView mTvEmpty;
@@ -37,23 +38,23 @@ public class ShowMoreActivity extends AppCompatActivity {
         sml = findViewById(R.id.sml);
         mTvEmpty = findViewById(R.id.tv_empty);
 
-        sml.setShowMoreListener(new ShowMoreLayout.ShowMoreListener() {
-            @Override
-            public void onRefresh(ShowMoreLayout showMoreLayout) {
-                sml.postDelayed(() -> {
-                    showMoreLayout.showRefreshView(false);
-                    refreshData(mList);
-                    mAdapter.notifyDataSetChanged();
-                }, 3000);
-
-
-            }
-
-            @Override
-            public void onMore(ShowMoreLayout showMoreLayout) {
-
-            }
-        });
+//        sml.setShowMoreListener(new ShowMoreLayout.ShowMoreListener() {
+//            @Override
+//            public void onRefresh(ShowMoreLayout showMoreLayout) {
+//                sml.postDelayed(() -> {
+//                    showMoreLayout.showRefreshView(false);
+//                    refreshData(mList);
+//                    mAdapter.notifyDataSetChanged();
+//                }, 3000);
+//
+//
+//            }
+//
+//            @Override
+//            public void onMore(ShowMoreLayout showMoreLayout) {
+//
+//            }
+//        });
 
         mList = new ArrayList<>();
 

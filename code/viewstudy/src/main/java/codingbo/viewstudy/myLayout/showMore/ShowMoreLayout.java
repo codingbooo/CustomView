@@ -70,38 +70,51 @@ public class ShowMoreLayout extends ViewGroup {
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         // target 请求滑动的子view(这里并不一定是mContentView，有可能是mContentView的子View)
         // dx dy  请求滑动的像素点
-        // consumed 返回子view可滑动的距离。长度为2的数组，角标0代表x轴，角标1代表y轴
+        // consumed 返回父view消费的距离。长度为2的数组，角标0代表x轴，角标1代表y轴
 
 //        super.onNestedPreScroll(target, dx, dy, consumed);
 //        Log.d(TAG, "onNestedPreScroll: dx :" + dx);
-        Log.d(TAG, "onNestedPreScroll: dy :" + dy);
+//        Log.d(TAG, "onNestedPreScroll: dy :" + dy);
 //        Log.d(TAG, "onNestedPreScroll: consumed :" + Arrays.toString(consumed));
 
         //子view是否能向下滑动
         boolean childCanScrollDown = target.canScrollVertically(-1);
-        Log.d(TAG, "onNestedPreScroll canScrollVertically: " + childCanScrollDown);
+//        Log.d(TAG, "onNestedPreScroll canScrollVertically: " + childCanScrollDown);
 
-        consumed[0] = dx;
-        boolean intercept = !childCanScrollDown || mOffsetY >= 0;
-        Log.d(TAG, "onNestedPreScroll intercept: " + intercept);
+//        consumed[0] = 0;
+        boolean intercept = !childCanScrollDown || getOffsetY() > 0;
+//        Log.d(TAG, "onNestedPreScroll intercept: " + intercept);
         if (intercept) {
             //拦截滑动事件;
-            post(() -> moveY(-dy));
-            consumed[1] = 0;
+            moveY(-dy);
+            consumed[1] = dy;
         } else {
             //不拦截滑动事件
-            consumed[1] = dy;
+            consumed[1] = 0;
         }
+
     }
 
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-//        Log.d(TAG, "onNestedFling: velocity X:" + velocityX);
-//        Log.d(TAG, "onNestedFling: velocity Y:" + velocityY);
-//        Log.d(TAG, "onNestedFling: consumed :" + consumed);
-//        moveY(dy);
-        return super.onNestedFling(target, velocityX, velocityY, consumed);
+//        return super.onNestedFling(target, velocityX, velocityY, consumed);
+        //这个方法是up的时候回调
 
+        Log.d(TAG, "onNestedFling: velocity X:" + velocityX);
+        Log.d(TAG, "onNestedFling: velocity Y:" + velocityY);
+        Log.d(TAG, "onNestedFling: consumed :" + consumed);
+
+        if (getOffsetY() <= 0) {
+            return false;
+        }
+
+        if (getOffsetY() >= mHeaderHeight / 2) {
+            moveToHeaderOpen();
+        } else {
+            moveToHeaderClose();
+        }
+
+        return true;
     }
 
     @Override

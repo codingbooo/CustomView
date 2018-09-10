@@ -6,7 +6,7 @@
     android:background="#abcdef"
     android:orientation="vertical">
 
-    <codingbo.viewstudy.myLayout.showMore.ShowMoreLayout
+    <codingbo.viewstudy.myLayout.showMore.ShowMoreLayout2
         android:id="@+id/sml"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -37,7 +37,7 @@
         </LinearLayout>
 
 
-    </codingbo.viewstudy.myLayout.showMore.ShowMoreLayout>
+    </codingbo.viewstudy.myLayout.showMore.ShowMoreLayout2>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
