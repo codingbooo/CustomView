@@ -13,8 +13,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import codingbo.viewstudy.myLayout.showMore.IShowMoreLayout;
 import codingbo.viewstudy.myLayout.showMore.ShowMoreLayout;
 import codingbo.viewstudy.myLayout.showMore.ShowMoreLayout2;
+import codingbo.viewstudy.myLayout.showMore.ShowMoreListener;
 
 /**
  * Created by bob
@@ -38,23 +40,21 @@ public class ShowMoreActivity extends AppCompatActivity {
         sml = findViewById(R.id.sml);
         mTvEmpty = findViewById(R.id.tv_empty);
 
-//        sml.setShowMoreListener(new ShowMoreLayout.ShowMoreListener() {
-//            @Override
-//            public void onRefresh(ShowMoreLayout showMoreLayout) {
-//                sml.postDelayed(() -> {
-//                    showMoreLayout.showRefreshView(false);
-//                    refreshData(mList);
-//                    mAdapter.notifyDataSetChanged();
-//                }, 3000);
-//
-//
-//            }
-//
-//            @Override
-//            public void onMore(ShowMoreLayout showMoreLayout) {
-//
-//            }
-//        });
+        sml.setListener(new ShowMoreListener() {
+            @Override
+            public void onRefresh(IShowMoreLayout showMoreLayout) {
+                sml.postDelayed(() -> {
+                    showMoreLayout.showRefreshView(false);
+                    refreshData(mList);
+                    mAdapter.notifyDataSetChanged();
+                }, 3000);
+            }
+
+            @Override
+            public void onMore(IShowMoreLayout showMoreLayout) {
+
+            }
+        });
 
         mList = new ArrayList<>();
 
@@ -117,7 +117,7 @@ public class ShowMoreActivity extends AppCompatActivity {
         public ViewHolder(View itemView) {
             super(itemView);
 
-            tv = (TextView) itemView.findViewById(R.id.tv);
+            tv = itemView.findViewById(R.id.tv);
         }
     }
 }

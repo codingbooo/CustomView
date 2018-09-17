@@ -15,7 +15,7 @@ public interface ShowMoreHeader {
      * @param y    垂直位置
      * @param maxY 垂直最大位置
      */
-    void onDragging(int status, int y, int maxY);
+    void onDragging(ShowMoreState status, int y, int maxY);
 
 
     /**
@@ -23,18 +23,18 @@ public interface ShowMoreHeader {
      * <p>
      * 状态类型:
      * <p>
-     * {@link ShowMoreLayout#STATUS_NORMAL}正常状态
+     * {@link ShowMoreState#NORMAL}正常状态
      * <p>
-     * {@link ShowMoreLayout#STATUS_DRAGGING}下拉状态
+     * {@link ShowMoreState#DRAGGING}下拉状态
      * <p>
-     * {@link ShowMoreLayout#STATUS_REFRESHING}刷新状态
+     * {@link ShowMoreState#REFRESH}刷新状态
      * <p>
-     * {@link ShowMoreLayout#STATUS_FINISH}完成回收状态
+     * {@link ShowMoreState#COMPLETE}完成回收状态
      *
      * @param status    当前状态
      * @param oldStatus 上个状态
      */
-    void onStatusChanged(int status, int oldStatus);
+    void onStatusChanged(ShowMoreState status, ShowMoreState oldStatus);
 
     /**
      * 返回一个View实例

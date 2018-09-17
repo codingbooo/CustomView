@@ -13,16 +13,19 @@ import android.widget.Scroller;
  * Created by bob
  * on 2018/9/10.
  */
-public class ShowMoreLayout2 extends ViewGroup {
+public class ShowMoreLayout2 extends ViewGroup implements IShowMoreLayout {
     private static final String TAG = "ShowMoreLayout";
 
     private View mHeaderView;
     private View mContentView;
     private int mHeaderHeight;
-    private ShowMoreDefaultHeader mHeader;
+    private ShowMoreHeader mHeader;
     private Scroller mScroller;
 
     private ShowMoreState mCurrentState = ShowMoreState.NORMAL;
+
+
+    private ShowMoreListener mListener;
 
     public ShowMoreLayout2(Context context) {
         this(context, null);
@@ -36,6 +39,7 @@ public class ShowMoreLayout2 extends ViewGroup {
         super(context, attrs, defStyleAttr);
 
         mScroller = new Scroller(context);
+
     }
 
     @Override
@@ -110,8 +114,6 @@ public class ShowMoreLayout2 extends ViewGroup {
         // getStatus() == ShowMoreState.DRAGGING
         // 3 刷新状态一定不拦截
         // getStatus() == ShowMoreState.REFRESH
-
-
         boolean intercept = getStatus() != ShowMoreState.REFRESH &&
                 (getStatus() == ShowMoreState.DRAGGING ||
                         (dy < 0 && !target.canScrollVertically(-1)));
@@ -123,72 +125,87 @@ public class ShowMoreLayout2 extends ViewGroup {
         }
     }
 
-//    @Override
-//    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-//        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-//        Log.d(TAG, "onNestedScroll dyConsumed: " + dyConsumed + ", dyUnconsumed: " + dyUnconsumed);
-//    }
+    @Override
+    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+    }
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+        // 滑动速度过慢 不对回调该方法
+
+        // 拉动过程中拦截
+        //  根据下拉的位置 决定 滑到初始状态 还是 刷新状态
 
         if (getStatus() != ShowMoreState.DRAGGING) {
             return false;
         }
-        if (getScrollY() > -mHeaderHeight / 2) {
-            //open
-            showHeaderView();
-        } else {
-            //close
-            closeHeaderView();
-        }
+        fling();
 
         return true;
     }
 
-//    @Override
-//    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-////        return super.onNestedFling(target, velocityX, velocityY, consumed);
-//
-//        // 如果 header 正在展示 则消耗此时间
-//
-//        boolean headerIsShow = getScrollY() < 0;
-////        Log.d(TAG, "onNestedFling headerIsShow: " + headerIsShow);
-//        if (!headerIsShow) {
-//            return false;
-//        }
-//
-//        boolean showHeader = getScrollY() < -mHeaderHeight / 2;
-//
-//        Log.d(TAG, "onNestedFling showHeader: " + showHeader);
-//
-//        if (showHeader) {
-//            //open
-//            showHeaderView();
-//        } else {
-//            //close
-//            closeHeaderView();
-//        }
-//
-//        return true;
-//    }
+    private void fling() {
+        // 滑动处理
+        // 下滑y轴偏移量getScrollY()为负值
+        // 1. 偏移量 < -mHeaderHeight / 2  展开 header
+        // 2. 偏移量 > -mHeaderHeight / 2  关闭 header
+        // 3. 偏移量 > 0时, 不作处理
+
+        if (getScrollY() < -mHeaderHeight / 2) {
+            showHeaderView();
+        } else if (getScrollY() < 0) {
+            closeHeaderView();
+        }
+    }
+
+    @Override
+    public void showRefreshView(boolean show) {
+        if (show) {
+            showHeaderView();
+        } else {
+            closeHeaderView();
+        }
+    }
+
+
+    @Override
+    public void onStopNestedScroll(View child) {
+        //滑动结束时, 若在初始化位置 则修改改为 Normal
+        if (getScrollY() >= 0) {
+            setStatus(ShowMoreState.NORMAL);
+            return;
+        }
+
+        //当手指滑动距离不足时,onNestedPreFling()方法不会被回调,
+        //此时需要在此方法, 处理后续操作
+        if (getStatus() == ShowMoreState.DRAGGING) {
+            fling();
+        }
+    }
+
 
     private void closeHeaderView() {
-//        moveYTo(-getScrollY());
         setStatus(ShowMoreState.NORMAL);
-        Log.d(TAG, "closeHeaderView: --------------------------------");
         scroller(-getScrollY());
     }
 
     private void showHeaderView() {
         setStatus(ShowMoreState.REFRESH);
-        Log.d(TAG, "showHeaderView: ----------------------------");
-//        moveYTo(-mHeaderHeight);
         scroller(-mHeaderHeight - getScrollY());
     }
 
     private void setStatus(ShowMoreState refresh) {
+        if (mCurrentState == refresh) {
+            return;
+        }
+        if (mHeader != null) {
+            mHeader.onStatusChanged(refresh, mCurrentState);
+        }
         mCurrentState = refresh;
+        if (mListener != null && mCurrentState == ShowMoreState.REFRESH) {
+            mListener.onRefresh(this);
+        }
     }
 
     private ShowMoreState getStatus() {
@@ -199,8 +216,14 @@ public class ShowMoreLayout2 extends ViewGroup {
         int y = getScrollY() + dy;
         y = y >= 0 ? 0 : y;
         y = y <= -mHeaderHeight ? -mHeaderHeight : y;
-//        Log.d(TAG, "scrollTo: " + y);
         scrollTo(0, y);
+    }
+
+    @Override
+    public void scrollTo(int x, int y) {
+        super.scrollTo(x, y);
+        Log.d(TAG, "scrollTo: " + getScrollY());
+        mHeader.onDragging(mCurrentState, getScrollY(), -mHeaderHeight);
     }
 
     private void scroller(int dy) {
@@ -215,4 +238,10 @@ public class ShowMoreLayout2 extends ViewGroup {
             invalidate();
         }
     }
+
+    public void setListener(ShowMoreListener listener) {
+        mListener = listener;
+    }
+
+
 }

@@ -55,6 +55,7 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         tv.setLayoutParams(params);
         tv.setText("加载数据...");
+        tv.setTextColor(Color.WHITE);
         return tv;
     }
 
@@ -84,14 +85,14 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
     }
 
     @Override
-    public void onDragging(int status, int y, int max) {
+    public void onDragging(ShowMoreState status, int y, int max) {
         float degree = (float) y / max * 360;
         mIv.setRotation(degree);
     }
 
     @Override
-    public void onStatusChanged(int status, int oldStatus) {
-        setRotation(status == ShowMoreLayout.STATUS_REFRESHING);
+    public void onStatusChanged(ShowMoreState status, ShowMoreState oldStatus) {
+        setRotation(status == ShowMoreState.REFRESH);
     }
 
     private void setRotation(boolean rotation) {

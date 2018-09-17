@@ -15,25 +15,27 @@ import android.view.ViewGroup;
  * 上拉刷新 下拉加载
  * 分体式
  */
-public class ShowMoreLayout extends ViewGroup {
-    /**
-     * 正常状态
-     */
-    public static final int STATUS_NORMAL = 0;
-    /**
-     * 下拉状态
-     */
-    public static final int STATUS_DRAGGING = 1;
-    /**
-     * 刷新状态
-     */
-    public static final int STATUS_REFRESHING = 2;
-    /**
-     * 完成回收状态
-     */
-    public static final int STATUS_FINISH = 3;
+public class ShowMoreLayout extends ViewGroup implements IShowMoreLayout {
+//    /**
+//     * 正常状态
+//     */
+//    public static final int STATUS_NORMAL = 0;
+//    /**
+//     * 下拉状态
+//     */
+//    public static final int STATUS_DRAGGING = 1;
+//    /**
+//     * 刷新状态
+//     */
+//    public static final int STATUS_REFRESHING = 2;
+//    /**
+//     * 完成回收状态
+//     */
+//    public static final int STATUS_FINISH = 3;
+
+
     private static final String TAG = "ShowMoreLayout";
-    private int mCurrentStatus = STATUS_NORMAL;
+    private ShowMoreState mCurrentStatus = ShowMoreState.NORMAL;
 
     private View mHeaderView;
     private View mContentView;
@@ -204,7 +206,7 @@ public class ShowMoreLayout extends ViewGroup {
         top = -mHeaderHeight + mOffsetY;
         bottom = mOffsetY;
 
-        mHeader.onDragging(STATUS_REFRESHING, mOffsetY, mHeaderHeight);
+        mHeader.onDragging(ShowMoreState.REFRESH, mOffsetY, mHeaderHeight);
         header.layout(left, top, right, bottom);
 
     }
@@ -248,7 +250,7 @@ public class ShowMoreLayout extends ViewGroup {
 
     private void moveToHeaderOpen() {
         if (mOffsetY == mHeaderHeight) {
-            statusChanged(STATUS_REFRESHING);
+            statusChanged(ShowMoreState.REFRESH);
             return;
         }
 
@@ -262,16 +264,16 @@ public class ShowMoreLayout extends ViewGroup {
         mHeaderOpenAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                statusChanged(STATUS_REFRESHING);
+                statusChanged(ShowMoreState.REFRESH);
             }
         });
         mHeaderOpenAnimator.start();
-        statusChanged(STATUS_DRAGGING);
+        statusChanged(ShowMoreState.DRAGGING);
     }
 
     private void moveToHeaderClose() {
         if (mOffsetY == 0) {
-            statusChanged(STATUS_NORMAL);
+            statusChanged(ShowMoreState.NORMAL);
             return;
         }
 
@@ -285,11 +287,11 @@ public class ShowMoreLayout extends ViewGroup {
         mHeaderCloseAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                statusChanged(STATUS_NORMAL);
+                statusChanged(ShowMoreState.NORMAL);
             }
         });
         mHeaderCloseAnimator.start();
-        statusChanged(STATUS_DRAGGING);
+        statusChanged(ShowMoreState.DRAGGING);
     }
 
     private void moveY(float dy) {
@@ -313,13 +315,13 @@ public class ShowMoreLayout extends ViewGroup {
         requestLayout();
     }
 
-    private void statusChanged(int status) {
+    private void statusChanged(ShowMoreState status) {
         if (status != mCurrentStatus) {
             mHeader.onStatusChanged(status, mCurrentStatus);
             mCurrentStatus = status;
         }
 
-        if (mShowMoreListener != null && mCurrentStatus == STATUS_REFRESHING) {
+        if (mShowMoreListener != null && mCurrentStatus == ShowMoreState.REFRESH) {
             mShowMoreListener.onRefresh(this);
         }
     }
@@ -327,6 +329,7 @@ public class ShowMoreLayout extends ViewGroup {
     /**
      * 显示刷新界面
      */
+    @Override
     public void showRefreshView(boolean show) {
         if (show) {
             moveToHeaderOpen();
@@ -336,18 +339,6 @@ public class ShowMoreLayout extends ViewGroup {
     }
 
     public void showMoreView(boolean show) {
-
-    }
-
-    public void setShowMoreListener(ShowMoreListener showMoreListener) {
-        mShowMoreListener = showMoreListener;
-    }
-
-    public interface ShowMoreListener {
-
-        void onRefresh(ShowMoreLayout showMoreLayout);
-
-        void onMore(ShowMoreLayout showMoreLayout);
 
     }
 }
