@@ -6,16 +6,22 @@
     android:background="#abcdef"
     android:orientation="vertical">
 
-    <codingbo.viewstudy.myLayout.showMore.ShowMoreLayout2
+    <codingbo.viewstudy.myLayout.showMore.ShowMoreLayout
         android:id="@+id/sml"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:padding="10dp"
         >
+
+        <codingbo.viewstudy.myLayout.showMore.DefaultHeader
+            android:layout_width="match_parent"
+            android:layout_height="100dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="10dp"
             android:orientation="vertical">
 
             <TextView
@@ -24,9 +30,9 @@
                 android:layout_height="match_parent"
                 android:background="#ffffff"
                 android:gravity="center"
-                android:visibility="gone"
                 android:text="暂无数据"
-                android:textSize="30sp"/>
+                android:textSize="30sp"
+                android:visibility="gone"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
@@ -37,7 +43,7 @@
         </LinearLayout>
 
 
-    </codingbo.viewstudy.myLayout.showMore.ShowMoreLayout2>
+    </codingbo.viewstudy.myLayout.showMore.ShowMoreLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
@@ -46,11 +52,28 @@
         android:padding="10dp"
         >
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView2"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#aaffaa"/>
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:text="暂无数据"
+                android:textSize="30sp"
+                android:visibility="gone"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#aaffaa"/>
+
+        </LinearLayout>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

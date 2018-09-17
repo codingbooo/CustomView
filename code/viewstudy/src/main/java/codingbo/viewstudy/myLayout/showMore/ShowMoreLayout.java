@@ -1,344 +1,253 @@
 package codingbo.viewstudy.myLayout.showMore;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.support.v4.view.NestedScrollingParentHelper;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Scroller;
 
 /**
- * 上拉刷新 下拉加载
- * 分体式
+ * Created by bob
+ * on 2018/9/10.
  */
 public class ShowMoreLayout extends ViewGroup implements IShowMoreLayout {
-//    /**
-//     * 正常状态
-//     */
-//    public static final int STATUS_NORMAL = 0;
-//    /**
-//     * 下拉状态
-//     */
-//    public static final int STATUS_DRAGGING = 1;
-//    /**
-//     * 刷新状态
-//     */
-//    public static final int STATUS_REFRESHING = 2;
-//    /**
-//     * 完成回收状态
-//     */
-//    public static final int STATUS_FINISH = 3;
-
-
     private static final String TAG = "ShowMoreLayout";
-    private ShowMoreState mCurrentStatus = ShowMoreState.NORMAL;
 
     private View mHeaderView;
     private View mContentView;
     private int mHeaderHeight;
-    private int mOffsetY;
-    private float mLastX;
-    private float mLastY;
-    private ShowMoreDefaultHeader mHeader;
-    private ShowMoreListener mShowMoreListener;
-    private ObjectAnimator mHeaderCloseAnimator;
-    private ObjectAnimator mHeaderOpenAnimator;
-    private NestedScrollingParentHelper mScrollingParentHelper;
+    private ShowMoreHeader mHeader;
+    private Scroller mScroller;
+
+    private ShowMoreState mCurrentState = ShowMoreState.NORMAL;
+
+
+    private ShowMoreListener mListener;
 
     public ShowMoreLayout(Context context) {
         this(context, null);
     }
 
-    public ShowMoreLayout(Context context, AttributeSet attrs) {
+    public ShowMoreLayout(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ShowMoreLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ShowMoreLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-//        mScrollingParentHelper = new NestedScrollingParentHelper(this);
-    }
 
-    @Override
-    public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-//        return super.onStartNestedScroll(child, target, nestedScrollAxes);
-        return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
-    }
+        mScroller = new Scroller(context);
 
-    @Override
-    public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
-        // target 请求滑动的子view(这里并不一定是mContentView，有可能是mContentView的子View)
-        // dx dy  请求滑动的像素点
-        // consumed 返回父view消费的距离。长度为2的数组，角标0代表x轴，角标1代表y轴
-
-//        super.onNestedPreScroll(target, dx, dy, consumed);
-//        Log.d(TAG, "onNestedPreScroll: dx :" + dx);
-//        Log.d(TAG, "onNestedPreScroll: dy :" + dy);
-//        Log.d(TAG, "onNestedPreScroll: consumed :" + Arrays.toString(consumed));
-
-        //子view是否能向下滑动
-        boolean childCanScrollDown = target.canScrollVertically(-1);
-//        Log.d(TAG, "onNestedPreScroll canScrollVertically: " + childCanScrollDown);
-
-//        consumed[0] = 0;
-        boolean intercept = !childCanScrollDown || getOffsetY() > 0;
-//        Log.d(TAG, "onNestedPreScroll intercept: " + intercept);
-        if (intercept) {
-            //拦截滑动事件;
-            moveY(-dy);
-            consumed[1] = dy;
-        } else {
-            //不拦截滑动事件
-            consumed[1] = 0;
-        }
-
-    }
-
-    @Override
-    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-//        return super.onNestedFling(target, velocityX, velocityY, consumed);
-        //这个方法是up的时候回调
-
-        Log.d(TAG, "onNestedFling: velocity X:" + velocityX);
-        Log.d(TAG, "onNestedFling: velocity Y:" + velocityY);
-        Log.d(TAG, "onNestedFling: consumed :" + consumed);
-
-        if (getOffsetY() <= 0) {
-            return false;
-        }
-
-        if (getOffsetY() >= mHeaderHeight / 2) {
-            moveToHeaderOpen();
-        } else {
-            moveToHeaderClose();
-        }
-
-        return true;
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        // 布局文件有了就用布局的 没有就给个默认的
 
-        //TODO 健壮性判断
-        View mContent = getChildAt(0);
+        int count = getChildCount();
 
-        mContentView = mContent;
+        if (count < 1) {
+            throw new RuntimeException("只要有一个View");
+        } else if (count == 1) {
+            mContentView = getChildAt(0);
+        } else {
+            View v1 = getChildAt(0);
+            View v2 = getChildAt(1);
+            if (v1 instanceof ShowMoreHeader) {
+                mHeader = (ShowMoreHeader) v1;
+                mContentView = v2;
+            } else {
+                mHeader = (ShowMoreHeader) v2;
+                mContentView = v1;
+            }
+        }
 
-
-        mHeader = ShowMoreDefaultHeader.getInstance(getContext());
-        View headerView = mHeader.getView();
-        mHeaderView = headerView;
-
-        addView(headerView);
+        if (mHeader == null) {
+            mHeader = DefaultHeader.getInstance(getContext());
+            View headerView = mHeader.getView();
+            mHeaderView = headerView;
+            addView(headerView);
+        } else {
+            mHeaderView = mHeader.getView();
+        }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        //支持Margin 会引起header位置混乱
         measureChildren(widthMeasureSpec, heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
         mHeaderHeight = mHeaderView.getMeasuredHeight();
-
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        int left = getPaddingLeft();
+        int top = getPaddingTop();
+        int right = getMeasuredWidth() - getPaddingRight();
+        int bottom = getMeasuredHeight() - getPaddingBottom();
 
-        layoutHeader(mHeaderView, l, t, r, b);
-
-        layoutContent(mContentView, l, t, r, b);
+        layoutHeader(mHeaderView, left, top, right, bottom);
+        layoutContent(mContentView, left, top, right, bottom);
     }
 
     private void layoutContent(View content, int l, int t, int r, int b) {
-        int left = l;
-        int top = t + mOffsetY;
-        int right = r;
-        int bottom = b + mOffsetY;
-        content.layout(left, top, right, bottom);
-
+        content.layout(l, t, r, b);
     }
-
-//    @Override
-//    public boolean onInterceptTouchEvent(MotionEvent ev) {
-////        return super.onInterceptTouchEvent(ev);
-//
-//
-////        Log.d(TAG, "onInterceptTouchEvent child can ScrollVertically: "
-////                + mContentView.canScrollVertically(-1));
-//        if (mContentView.canScrollVertically(-1)) {
-//            return false;
-//        }
-//        float x = ev.getX();
-//        float y = ev.getY();
-//        boolean result = false;
-//        switch (ev.getAction()) {
-//            case MotionEvent.ACTION_DOWN:
-//
-//                result = false;
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                float dx = x - mLastX;
-//                float dy = y - mLastY;
-//                result = dy > 0;
-//                break;
-//            case MotionEvent.ACTION_UP:
-//
-//                result = false;
-//                break;
-//            default:
-//                break;
-//        }
-//        mLastX = x;
-//        mLastY = y;
-//        return result;
-//    }
 
     private void layoutHeader(View header, int l, int t, int r, int b) {
-        int left = 0;
-        int top = 0;
-        int right = r;
-        int bottom = 0;
-
-        top = -mHeaderHeight + mOffsetY;
-        bottom = mOffsetY;
-
-        mHeader.onDragging(ShowMoreState.REFRESH, mOffsetY, mHeaderHeight);
-        header.layout(left, top, right, bottom);
-
-    }
-//
-//    @Override
-//    public boolean onTouchEvent(MotionEvent ev) {
-////        return super.onTouchEvent(event);
-////        if (mCurrentStatus == STATUS_REFRESHING) {
-////            return false;
-////        }
-//        float x = ev.getX();
-//        float y = ev.getY();
-//        switch (ev.getAction()) {
-//            case MotionEvent.ACTION_DOWN:
-//
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                float dx = x - mLastX;
-//                float dy = y - mLastY;
-//                moveY(dy);
-//                statusChanged(STATUS_DRAGGING);
-//                break;
-//            case MotionEvent.ACTION_UP:
-//                if (mOffsetY >= mHeaderHeight / 3 * 2) {
-//                    moveToHeaderOpen();
-//                } else {
-//                    moveToHeaderClose();
-//                }
-//                mLastX = 0;
-//                mLastY = 0;
-//                break;
-//            default:
-//                break;
-//        }
-//
-//        mLastX = x;
-//        mLastY = y;
-//
-//        return true;
-//    }
-
-    private void moveToHeaderOpen() {
-        if (mOffsetY == mHeaderHeight) {
-            statusChanged(ShowMoreState.REFRESH);
-            return;
-        }
-
-        if (mHeaderOpenAnimator != null && mHeaderOpenAnimator.isRunning()) {
-            mHeaderOpenAnimator.cancel();
-        }
-
-        mHeaderOpenAnimator = ObjectAnimator.ofInt(this,
-                "offsetY", mOffsetY, mHeaderHeight);
-        mHeaderOpenAnimator.setDuration(500);
-        mHeaderOpenAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                statusChanged(ShowMoreState.REFRESH);
-            }
-        });
-        mHeaderOpenAnimator.start();
-        statusChanged(ShowMoreState.DRAGGING);
+        int bottom = t;
+        int top = bottom - mHeaderHeight;
+        header.layout(l, top, r, bottom);
     }
 
-    private void moveToHeaderClose() {
-        if (mOffsetY == 0) {
-            statusChanged(ShowMoreState.NORMAL);
-            return;
-        }
-
-        if (mHeaderCloseAnimator != null && mHeaderCloseAnimator.isRunning()) {
-            mHeaderCloseAnimator.cancel();
-        }
-
-        mHeaderCloseAnimator = ObjectAnimator.ofInt(this,
-                "offsetY", mOffsetY, 0);
-        mHeaderCloseAnimator.setDuration(300);
-        mHeaderCloseAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                statusChanged(ShowMoreState.NORMAL);
-            }
-        });
-        mHeaderCloseAnimator.start();
-        statusChanged(ShowMoreState.DRAGGING);
+    @Override
+    public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
+        //拦截纵向滑动事件
+        return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
-    private void moveY(float dy) {
-        mOffsetY += dy;
-
-        mOffsetY = mOffsetY >= mHeaderHeight ? mHeaderHeight : mOffsetY;
-        mOffsetY = mOffsetY <= 0 ? 0 : mOffsetY;
-
-        requestLayout();
+    @Override
+    public void onNestedScrollAccepted(View child, View target, int axes) {
+        super.onNestedScrollAccepted(child, target, axes);
     }
 
-    public int getOffsetY() {
-        return mOffsetY;
-    }
+    @Override
+    public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+        // 1 向下滑的时候 如果子view不能向下滑 拦截
+        // dy < 0 && !target.canScrollVertically(-1)
+        // 2 下拉状态一定拦截
+        // getStatus() == ShowMoreState.DRAGGING
+        // 3 刷新状态一定不拦截
+        // getStatus() == ShowMoreState.REFRESH
+        boolean intercept = getStatus() != ShowMoreState.REFRESH &&
+                (getStatus() == ShowMoreState.DRAGGING ||
+                        (dy < 0 && !target.canScrollVertically(-1)));
 
-    public void setOffsetY(int offsetY) {
-        if (mOffsetY == offsetY) {
-            return;
-        }
-        mOffsetY = offsetY;
-        requestLayout();
-    }
-
-    private void statusChanged(ShowMoreState status) {
-        if (status != mCurrentStatus) {
-            mHeader.onStatusChanged(status, mCurrentStatus);
-            mCurrentStatus = status;
-        }
-
-        if (mShowMoreListener != null && mCurrentStatus == ShowMoreState.REFRESH) {
-            mShowMoreListener.onRefresh(this);
+        if (intercept) {
+            consumed[1] = dy;
+            moveYTo(dy);
+            setStatus(ShowMoreState.DRAGGING);
         }
     }
 
-    /**
-     * 显示刷新界面
-     */
+    @Override
+    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+    }
+
+    @Override
+    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+        // 滑动速度过慢 不对回调该方法
+
+        // 拉动过程中拦截
+        //  根据下拉的位置 决定 滑到初始状态 还是 刷新状态
+
+        if (getStatus() != ShowMoreState.DRAGGING) {
+            return false;
+        }
+        fling();
+
+        return true;
+    }
+
+    private void fling() {
+        // 滑动处理
+        // 下滑y轴偏移量getScrollY()为负值
+        // 1. 偏移量 < -mHeaderHeight / 2  展开 header
+        // 2. 偏移量 > -mHeaderHeight / 2  关闭 header
+        // 3. 偏移量 > 0时, 不作处理
+
+        if (getScrollY() < -mHeaderHeight / 2) {
+            showHeaderView();
+        } else if (getScrollY() < 0) {
+            closeHeaderView();
+        }
+    }
+
     @Override
     public void showRefreshView(boolean show) {
         if (show) {
-            moveToHeaderOpen();
+            showHeaderView();
         } else {
-            moveToHeaderClose();
+            closeHeaderView();
         }
     }
 
-    public void showMoreView(boolean show) {
+    @Override
+    public void onStopNestedScroll(View child) {
+        //滑动结束时, 若在初始化位置 则修改改为 Normal
+        if (getScrollY() >= 0) {
+            setStatus(ShowMoreState.NORMAL);
+            return;
+        }
 
+        //当手指滑动距离不足时,onNestedPreFling()方法不会被回调,
+        //此时需要在此方法, 处理后续操作
+        if (getStatus() == ShowMoreState.DRAGGING) {
+            fling();
+        }
     }
+
+    private void closeHeaderView() {
+        setStatus(ShowMoreState.NORMAL);
+        scroller(-getScrollY());
+    }
+
+    private void showHeaderView() {
+        setStatus(ShowMoreState.REFRESH);
+        scroller(-mHeaderHeight - getScrollY());
+    }
+
+    private void setStatus(ShowMoreState refresh) {
+        if (mCurrentState == refresh) {
+            return;
+        }
+        if (mHeader != null) {
+            mHeader.onStatusChanged(refresh, mCurrentState);
+        }
+        mCurrentState = refresh;
+        if (mListener != null && mCurrentState == ShowMoreState.REFRESH) {
+            mListener.onRefresh(this);
+        }
+    }
+
+    private ShowMoreState getStatus() {
+        return mCurrentState;
+    }
+
+    private void moveYTo(int dy) {
+        int y = getScrollY() + dy;
+        y = y >= 0 ? 0 : y;
+        y = y <= -mHeaderHeight ? -mHeaderHeight : y;
+        scrollTo(0, y);
+    }
+
+    @Override
+    public void scrollTo(int x, int y) {
+        super.scrollTo(x, y);
+        Log.d(TAG, "scrollTo: " + getScrollY());
+        mHeader.onDragging(mCurrentState, getScrollY(), -mHeaderHeight);
+    }
+
+    private void scroller(int dy) {
+        mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
+        invalidate();
+    }
+
+    @Override
+    public void computeScroll() {
+        if (mScroller.computeScrollOffset()) {
+            scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
+            invalidate();
+        }
+    }
+
+    public void setListener(ShowMoreListener listener) {
+        mListener = listener;
+    }
+
 }

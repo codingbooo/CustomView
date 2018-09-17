@@ -5,6 +5,8 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -16,47 +18,47 @@ import android.widget.TextView;
 import codingbo.viewstudy.R;
 
 /**
- * 默认Header
- *
- * @author bob
+ * Created by bob
+ * on 2018/9/17.
  */
-public class ShowMoreDefaultHeader implements ShowMoreHeader {
-    private static final String TAG = "ShowMoreDefaultHeader";
-    private boolean mRotation = true;
-    private final ImageView mIv;
-    private final TextView mTv;
-    private LinearLayout mLayout;
+public class DefaultHeader extends LinearLayout implements ShowMoreHeader {
+
+    private ImageView mIv;
+    private TextView mTv;
     private ObjectAnimator mAnimator;
 
-    public ShowMoreDefaultHeader(Context context) {
+    public static DefaultHeader getInstance(Context context) {
+        return new DefaultHeader(context);
+    }
 
-        mLayout = getLayout(context);
+    public DefaultHeader(Context context) {
+        this(context, null);
+    }
 
+    public DefaultHeader(Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public DefaultHeader(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context);
+    }
+
+    private void init(Context context) {
         mIv = getImageView(context);
-
         mTv = getTextView(context);
 
-        mLayout.addView(mIv);
-        mLayout.addView(mTv);
-
-//        mLayout.setOnClickListener(v -> {
-//            setRotation(mRotation = !mRotation);
-//        });
-    }
-
-    public static ShowMoreDefaultHeader getInstance(Context context) {
-        return new ShowMoreDefaultHeader(context);
-    }
-
-    private TextView getTextView(Context context) {
-        TextView tv = new TextView(context);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        tv.setLayoutParams(params);
-        tv.setText("加载数据...");
-        tv.setTextColor(Color.WHITE);
-        return tv;
+        setLayoutParams(params);
+        setGravity(Gravity.CENTER);
+        setOrientation(LinearLayout.HORIZONTAL);
+        setBackgroundColor(Color.GRAY);
+        setPadding(0, 100, 0, 100);
+
+        addView(mIv);
+        addView(mTv);
     }
 
     private ImageView getImageView(Context context) {
@@ -71,28 +73,37 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
         return imageView;
     }
 
-    private LinearLayout getLayout(Context context) {
-        LinearLayout layout = new LinearLayout(context);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
+
+    private TextView getTextView(Context context) {
+        TextView tv = new TextView(context);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        layout.setLayoutParams(params);
-        layout.setGravity(Gravity.CENTER);
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setBackgroundColor(Color.GRAY);
-        layout.setPadding(0, 100, 0, 100);
-        return layout;
+        tv.setLayoutParams(params);
+        tv.setTextColor(Color.WHITE);
+        return tv;
     }
 
     @Override
-    public void onDragging(ShowMoreState status, int y, int max) {
-        float degree = (float) y / max * 360;
+    public void onDragging(ShowMoreState status, int y, int maxY) {
+        float degree = (float) y / maxY * 360;
         mIv.setRotation(degree);
     }
 
     @Override
     public void onStatusChanged(ShowMoreState status, ShowMoreState oldStatus) {
         setRotation(status == ShowMoreState.REFRESH);
+        setTips(status);
+    }
+
+    private void setTips(ShowMoreState status) {
+        String tips;
+        if (status == ShowMoreState.REFRESH) {
+            tips = "正在刷新...";
+        } else {
+            tips = "下拉刷新...";
+        }
+        mTv.setText(tips);
     }
 
     private void setRotation(boolean rotation) {
@@ -100,7 +111,6 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
             //取消动画
             if (mAnimator != null && mAnimator.isRunning()) {
                 mAnimator.cancel();
-                Log.d(TAG, "stop Rotation");
             }
             return;
         }
@@ -120,6 +130,6 @@ public class ShowMoreDefaultHeader implements ShowMoreHeader {
 
     @Override
     public View getView() {
-        return mLayout;
+        return this;
     }
 }

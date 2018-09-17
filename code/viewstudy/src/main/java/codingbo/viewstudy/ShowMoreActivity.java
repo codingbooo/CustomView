@@ -1,6 +1,7 @@
 package codingbo.viewstudy;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 
 import codingbo.viewstudy.myLayout.showMore.IShowMoreLayout;
 import codingbo.viewstudy.myLayout.showMore.ShowMoreLayout;
-import codingbo.viewstudy.myLayout.showMore.ShowMoreLayout2;
 import codingbo.viewstudy.myLayout.showMore.ShowMoreListener;
 
 /**
@@ -24,7 +24,7 @@ import codingbo.viewstudy.myLayout.showMore.ShowMoreListener;
  */
 public class ShowMoreActivity extends AppCompatActivity {
 
-    private ShowMoreLayout2 sml;
+    private ShowMoreLayout sml;
     private RecyclerView mRecyclerView;
     private RecyclerView mRecyclerView2;
     private TextView mTvEmpty;
@@ -63,15 +63,14 @@ public class ShowMoreActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.HORIZONTAL));
+                DividerItemDecoration.VERTICAL));
         mAdapter = new Adapter();
         mRecyclerView.setAdapter(mAdapter);
-
 
         mRecyclerView2 = findViewById(R.id.recyclerView2);
         mRecyclerView2.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView2.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.HORIZONTAL));
+                DividerItemDecoration.VERTICAL));
         mRecyclerView2.setAdapter(mAdapter);
     }
 
@@ -93,14 +92,15 @@ public class ShowMoreActivity extends AppCompatActivity {
 
     class Adapter extends RecyclerView.Adapter<ViewHolder> {
 
+        @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(ShowMoreActivity.this).inflate(R.layout.demo_item, parent, false);
             return new ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             String s = mList.get(position);
             holder.tv.setText(s);
         }

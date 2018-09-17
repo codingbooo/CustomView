@@ -3,8 +3,7 @@ package codingbo.viewstudy.myLayout.showMore;
 import android.view.View;
 
 /**
- * Created by bob
- * on 2018/9/6.
+ * header接口
  *
  * @author bob
  */
