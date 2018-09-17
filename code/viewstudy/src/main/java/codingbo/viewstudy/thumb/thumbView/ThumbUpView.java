@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 
 public class ThumbUpView extends LinearLayout {
     private static final String TAG = "ThumbUpView";
+    private ThumbView mThumbView;
+    private NumberView mNumberView;
 
     public ThumbUpView(Context context) {
         this(context, null);
@@ -37,66 +39,23 @@ public class ThumbUpView extends LinearLayout {
         setOrientation(HORIZONTAL);
         setClipChildren(false);
 
-        ThumbView thumbView = new ThumbView(getContext());
-        NumberView numberView = new NumberView(getContext());
+        mThumbView = new ThumbView(getContext());
+        mNumberView = new NumberView(getContext());
 
-        numberView.setPadding(10, 10, 10, 10);
-        numberView.setGap(1);
-        numberView.setCount(999);
+//        mNumberView.setPadding(10, 10, 10, 10);
+        mNumberView.setGap(1);
+        mNumberView.setCount(true, 999);
 
-        addView(thumbView);
-        addView(numberView);
+        addView(mThumbView);
+        addView(mNumberView);
 
         requestLayout();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        int count = getChildCount();
-//        for (int i = 0; i < count; i++) {
-//            View view = getChildAt(i);
-//            int measuredWidth = view.getMeasuredWidth();
-//            int measuredHeight = view.getMeasuredHeight();
-//        }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    public void setCount(boolean flag, int count) {
+        mThumbView.setLiked(flag);
+        mNumberView.setCount(flag, count);
     }
-
-//    @Override
-//    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-//        int count = getChildCount();
-//        int totalWidth = 0;
-//        for (int i = 0; i < count; i++) {
-//            View view = getChildAt(i);
-//            int measuredWidth = view.getMeasuredWidth();
-////            int measuredHeight = view.getMeasuredHeight();
-//            totalWidth += MeasureSpec.getSize(measuredWidth);
-//        }
-//
-//        Log.d(TAG, "l: " + l);
-//        Log.d(TAG, "t: " + t);
-//        Log.d(TAG, "r: " + r);
-//        Log.d(TAG, "b: " + b);
-//        Log.d(TAG, "totalWidth: " + totalWidth);
-//
-//        l = (r - l) / 2 - totalWidth / 2;
-//        t = (b - t) / 2;
-//        for (int i = 0; i < count; i++) {
-//            View view = getChildAt(i);
-//            int width = MeasureSpec.getSize(view.getMeasuredWidth());
-//            int height = MeasureSpec.getSize(view.getMeasuredHeight());
-//
-//            r = l + width;
-//            b = t + height;
-//            Log.d(TAG, "child l: " + l);
-//            Log.d(TAG, "child t: " + t);
-//            Log.d(TAG, "child r: " + r);
-//            Log.d(TAG, "child b: " + b);
-//            view.layout(l, t - height / 2, r, b);
-//
-//            l += width;
-//        }
-////        super.onLayout(changed, l, t, r, b);
-//    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

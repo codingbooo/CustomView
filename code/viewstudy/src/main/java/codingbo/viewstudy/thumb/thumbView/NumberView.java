@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 
 /**
@@ -22,7 +21,7 @@ import android.view.View;
 
 public class NumberView extends View {
     private static final String TAG = "NumberView";
-    private int count = 99;
+    private int mCount = 99;
     private String[] mNumArray;
     private String mOldStrNumber;
     private String mNewStrNumber;
@@ -66,7 +65,7 @@ public class NumberView extends View {
 
         mRect = new Rect();
 
-        setCount(0);
+        setCount(false, 0);
         getPoint();
 
         setOnClickListener(v -> {
@@ -94,11 +93,13 @@ public class NumberView extends View {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
         if (widthMode == MeasureSpec.AT_MOST) {
-            widthMeasureSpec = MeasureSpec.makeMeasureSpec(mRect.width() + getPaddingLeft() + getPaddingRight(), widthMode);
+            widthMeasureSpec = MeasureSpec.makeMeasureSpec(
+                    mRect.width() + getPaddingLeft() + getPaddingRight(), widthMode);
         }
 
         if (heightMode == MeasureSpec.AT_MOST) {
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(mRect.height() + getPaddingTop() + getPaddingBottom(), heightMode);
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                    mRect.height() + getPaddingTop() + getPaddingBottom(), heightMode);
         }
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -149,31 +150,26 @@ public class NumberView extends View {
     }
 
     public int getCount() {
-        return count;
+        return mCount;
     }
 
-    public void setCount(int count) {
-        Log.d(TAG, "setCount: ");
-        this.count = count;
-        mOldStrNumber = String.valueOf(count);
-        mNewStrNumber = String.valueOf(count + mGap);
-        mNumArray = NumbUtils.calculator(count, mGap);
+    public void setCount(boolean isBig, int count) {
+        showNew = isBig;
 
-//        getPoint();
+        mCount = showNew ? count - 1 : count;
 
-//        int widthMeasureSpec = getMeasuredWidth();
-//        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-//        int heightMeasureSpec = getMeasuredHeight();
-//        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-//
-//        if (widthMode == MeasureSpec.AT_MOST) {
-//            widthMeasureSpec = MeasureSpec.makeMeasureSpec(mRect.width() * 3 / 2, widthMode);
-//        }
-//
-//        if (heightMode == MeasureSpec.AT_MOST) {
-//            heightMeasureSpec = MeasureSpec.makeMeasureSpec(mRect.height() * 3 / 2, heightMode);
-//        }
-//        measure(widthMeasureSpec, heightMeasureSpec);
+        mOldStrNumber = String.valueOf(mCount);
+        mNewStrNumber = String.valueOf(mCount + mGap);
+        mNumArray = NumbUtils.calculator(mCount, mGap);
+
+        mTextPaint.getTextBounds(mNewStrNumber, 0, mNewStrNumber.length(), mRect);
+
+        if (showNew) {
+            animUp();
+        }/* else {
+            setTextOffsetY(0);
+        }*/
+
         requestLayout();
 
         postInvalidate();
