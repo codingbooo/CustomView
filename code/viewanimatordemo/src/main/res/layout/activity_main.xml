@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <ViewFlipper
+        android:id="@+id/viewFlipper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autoStart="true"
+        android:flipInterval="5000"
+        android:inAnimation="@anim/anim_in"
+        android:outAnimation="@anim/anim_out"/>
+
+
+    <AdapterViewFlipper
+        android:id="@+id/adapterViewFlipper"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
+    <com.youth.banner.Banner
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:indicator_drawable_selected="@drawable/indicator_selected"
+        app:indicator_drawable_unselected="@drawable/indicator_unselected"
+        app:title_background="#97000000"
+        app:title_height="25dp"/>
+
+</LinearLayout>

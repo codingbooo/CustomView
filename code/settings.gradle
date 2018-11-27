@@ -1,1 +1,11 @@
-include ':app', ':viewlibrary', 'viewstudy', 'study'
+//exec {
+//    commandLine 'mshta', 'vbscript:msgbox("我运行啦!!!!",128,"提醒")(window.close)'
+//}
+
+include ':app'
+include ':viewlibrary'
+include ':viewanimatordemo'
+include 'viewstudy'
+include 'study'
+
+rootProject.name = 'ViewDemo'
