@@ -40,10 +40,9 @@ public class Demo1Activity extends AppCompatActivity {
     public void onBackPressed() {
         if (!mContentBehavior.isOpen()) {
             mContentBehavior.showHeader();
+            mHeaderBehavior.showHeader();
         } else {
             super.onBackPressed();
         }
     }
-
-
 }

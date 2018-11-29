@@ -3,69 +3,46 @@ package codingbo.top.behaviordemo.demo1;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.OverScroller;
 
 /**
  * Created by bob
  * on 2018/11/28.
  */
-public class Demo1HeaderBehavior extends CoordinatorLayout.Behavior {
+public class Demo1HeaderBehavior extends BaseBehavior {
     private static final String TAG = "Demo1HeaderBehavior";
-    private final OverScroller mOverScroller;
-    private int mHeight;
-    private View mChild;
-    private boolean onScrolling;
 
     public Demo1HeaderBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mOverScroller = new OverScroller(context);
     }
-
-    @Override
-    public boolean onMeasureChild(@NonNull CoordinatorLayout parent, @NonNull View child, int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
-        boolean b = super.onMeasureChild(parent, child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed);
-        mChild = child;
-        mHeight = child.getHeight();
-        return b;
-    }
-
-    @Override
-    public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout,
-                                       @NonNull View child, @NonNull View directTargetChild,
-                                       @NonNull View target, int axes, int type) {
-        return (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
-    }
-
 
     @Override
     public void onNestedPreScroll(@NonNull CoordinatorLayout coordinatorLayout,
                                   @NonNull View child, @NonNull View target,
                                   int dx, int dy, @NonNull int[] consumed, int type) {
-        if (dy < 0) {
+        if (dy < 0 || onScrolling) {
             return;
         }
         //上滑
         float translationY = child.getTranslationY();
 
-//        if (translationY < -mHeight + 100 && isOpen()) {
-//            if (!onScrolling) {
-//                closeHeader();
-//            }
-//            consumed[1] = dy;
-//            return;
-//        }
+        if (translationY < -mHeaderHeight + 100 && isOpen()) {
+            if (!onScrolling) {
+                closeHeader();
+            }
+            consumed[1] = dy;
+            return;
+        }
 
-        if (translationY > -mHeight) {
+        if (translationY > -mHeaderHeight) {
             float toTransY = translationY - dy;
-            if (toTransY > -mHeight) {
-                mChild.setTranslationY(toTransY);
+            if (toTransY > -mHeaderHeight) {
+                child.setTranslationY(toTransY);
                 consumed[1] = dy;
             } else {
-                mChild.setTranslationY(-mHeight);
-                consumed[1] = (int) (-mHeight - toTransY);
+                child.setTranslationY(-mHeaderHeight);
+                consumed[1] = (int) (-mHeaderHeight - toTransY);
             }
         }
     }
@@ -75,7 +52,7 @@ public class Demo1HeaderBehavior extends CoordinatorLayout.Behavior {
                                @NonNull View child, @NonNull View target, int dxConsumed, int dyConsumed,
                                int dxUnconsumed, int dyUnconsumed, int type) {
         //下滑
-        if (dyUnconsumed >= 0) {
+        if (dyUnconsumed >= 0 || !isOpen() || onScrolling) {
             return;
         }
         float translationY = child.getTranslationY();
@@ -88,34 +65,21 @@ public class Demo1HeaderBehavior extends CoordinatorLayout.Behavior {
         }
     }
 
+    @Override
     public boolean isOpen() {
-        return mChild.getTranslationY() > -mHeight;
+        return mView.getTranslationY() > -mHeaderHeight;
     }
 
 
+    @Override
     public void showHeader() {
-        flingTo(mChild, 0);
+        flingTo(mView, 0);
     }
 
+    @Override
     public void closeHeader() {
-        flingTo(mChild, -mHeight);
+        flingTo(mView, -mHeaderHeight);
     }
 
-    private void flingTo(final View child, float toTransY) {
-        mOverScroller.startScroll(0, (int) child.getTranslationY(),
-                0, (int) (toTransY - child.getTranslationY()),
-                200);
-        onScrolling = true;
-        child.postOnAnimation(new Runnable() {
-            @Override
-            public void run() {
-                if (mOverScroller.computeScrollOffset()) {
-                    child.setTranslationY(mOverScroller.getCurrY());
-                    child.postOnAnimation(this);
-                } else {
-                    onScrolling = false;
-                }
-            }
-        });
-    }
+
 }
