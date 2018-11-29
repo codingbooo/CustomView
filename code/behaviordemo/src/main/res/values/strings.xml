@@ -1,10 +1,10 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">BehaviorDemo</string>
 
     <string name="demo1_behavior">codingbo.top.behaviordemo.demo1.Demo1Behavior</string>
     <string name="demo1_header_behavior">codingbo.top.behaviordemo.demo1.Demo1HeaderBehavior</string>
 
-    <string name="content">I say to you today, my friends.\n
+    <string name="content" tools:ignore="TypographyDashes">I say to you today, my friends.\n
 And so even though we face the difficulties of today and tomorrow, I still have a dream. It is a dream deeply rooted in the American dream.\n
 I have a dream that one day this nation will rise up and live out the true meaning of its creed: "We hold these truths to be self-evident, that all men are created equal."\n
 I have a dream that one day on the red hills of Georgia, the sons of former slaves and the sons of former slave owners will be able to sit down together at the table of brotherhood.\n

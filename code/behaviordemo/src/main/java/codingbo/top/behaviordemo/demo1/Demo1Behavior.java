@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+import android.widget.OverScroller;
 
 /**
  * Created by bob
@@ -15,23 +15,26 @@ import android.view.View;
 public class Demo1Behavior extends CoordinatorLayout.Behavior {
     private static final String TAG = "Demo1Behavior";
     private int mHeaderMeasuredHeight;
-
-    public Demo1Behavior() {
-    }
+    private OverScroller mOverScroller;
+    private View mChild;
+    private boolean onScrolling;
 
     public Demo1Behavior(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
     }
 
+    private void init(Context context) {
+        mOverScroller = new OverScroller(context);
+    }
 
     @Override
     public boolean onMeasureChild(@NonNull CoordinatorLayout parent, @NonNull View child, int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
-
         boolean b = super.onMeasureChild(parent, child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed);
         View header = parent.getChildAt(0);
         mHeaderMeasuredHeight = header.getMeasuredHeight();
+        mChild = child;
         return b;
-
     }
 
     @Override
@@ -51,7 +54,6 @@ public class Demo1Behavior extends CoordinatorLayout.Behavior {
             return true;
         }
         return super.onLayoutChild(parent, child, layoutDirection);
-
     }
 
     @Override
@@ -69,8 +71,17 @@ public class Demo1Behavior extends CoordinatorLayout.Behavior {
             // 下滑不拦截
             return;
         }
-        //上滑 优先拦截
         float translationY = child.getTranslationY();
+
+//        if (translationY < 100 && isOpen()) {
+//            if (!onScrolling) {
+//                closeHeader();
+//            }
+//            consumed[1] = dy;
+//            return;
+//        }
+
+        //上滑 优先拦截
         if (translationY > 0) {
             //拦截并移动
             float toTransY = 0;
@@ -89,10 +100,10 @@ public class Demo1Behavior extends CoordinatorLayout.Behavior {
                                @NonNull View child, @NonNull View target,
                                int dxConsumed, int dyConsumed,
                                int dxUnconsumed, int dyUnconsumed, int type) {
-        //下滑 拦截
-        if (dyUnconsumed > 0) {
+        if (dyUnconsumed > 0 /*|| !isOpen()*/) {
             return;
         }
+        //下滑 拦截
         float translationY = child.getTranslationY();
         if (translationY < mHeaderMeasuredHeight) {
             float dY = mHeaderMeasuredHeight - translationY;
@@ -105,4 +116,36 @@ public class Demo1Behavior extends CoordinatorLayout.Behavior {
             child.setTranslationY(toTransY);
         }
     }
+
+    public boolean isOpen() {
+        return mChild.getTranslationY() != 0;
+    }
+
+    public void showHeader() {
+        flingTo(mChild, mHeaderMeasuredHeight);
+    }
+
+    public void closeHeader() {
+        flingTo(mChild, 0);
+    }
+
+    private void flingTo(final View child, float toTransY) {
+        mOverScroller.startScroll(0, (int) child.getTranslationY(),
+                0, (int) (toTransY - child.getTranslationY()),
+                200);
+        onScrolling = true;
+        child.postOnAnimation(new Runnable() {
+            @Override
+            public void run() {
+                if (mOverScroller.computeScrollOffset()) {
+                    child.setTranslationY(mOverScroller.getCurrY());
+                    child.postOnAnimation(this);
+                } else {
+                    onScrolling = false;
+                }
+            }
+        });
+    }
+
+
 }
