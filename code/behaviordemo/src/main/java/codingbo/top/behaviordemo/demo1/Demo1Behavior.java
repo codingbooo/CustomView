@@ -7,7 +7,6 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.OverScroller;
 
 /**
  * Created by bob
@@ -34,23 +33,35 @@ public class Demo1Behavior extends BaseBehavior {
     }
 
     @Override
-    public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout,
-                                       @NonNull View child, @NonNull View directTargetChild,
-                                       @NonNull View target, int axes, int type) {
-        return (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+    public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
+        Log.d(TAG, "onStartNestedScroll: ");
+        return super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type);
     }
+
+
+//    @Override
+//    public boolean onNestedPreFling(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, float velocityX, float velocityY) {
+//        return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY);
+//    }
 
     @Override
     public void onNestedPreScroll(@NonNull CoordinatorLayout coordinatorLayout,
                                   @NonNull View child, @NonNull View target,
                                   int dx, int dy, @NonNull int[] consumed, int type) {
-        if (dy < 0 || onScrolling) {
+        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type);
+        Log.d(TAG, "onNestedPreScroll: " + dy);
+        if (dy < 0 || onScrolling || posByScrollFling) {
+//        if (dy < 0 || onScrolling || type != ViewCompat.TYPE_TOUCH) {
+
+//            if (getCloseStatus() == State.Closing) {
+//                consumed[1] = dy;
+//            }
             // 下滑不拦截
             return;
         }
         float translationY = child.getTranslationY();
 
-        if (translationY < 100 && isOpen()) {
+        if (translationY < 100 && getCloseStatus() != State.Closed) {
             if (!onScrolling) {
                 closeHeader();
             }
@@ -77,7 +88,9 @@ public class Demo1Behavior extends BaseBehavior {
                                @NonNull View child, @NonNull View target,
                                int dxConsumed, int dyConsumed,
                                int dxUnconsumed, int dyUnconsumed, int type) {
-        if (dyUnconsumed > 0 || !isOpen() || onScrolling) {
+        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
+        Log.d(TAG, "onNestedScroll: " + dxUnconsumed);
+        if (dyUnconsumed > 0 || getCloseStatus() == State.Closed || onScrolling) {
             return;
         }
         //下滑 拦截
@@ -95,8 +108,14 @@ public class Demo1Behavior extends BaseBehavior {
     }
 
     @Override
-    public boolean isOpen() {
-        return mView.getTranslationY() != 0;
+    public State getCloseStatus() {
+        if (mView.getTranslationY() == 0) {
+            return State.Closed;
+        } else if (mView.getTranslationY() == mHeaderHeight) {
+            return State.Open;
+        } else {
+            return State.Closing;
+        }
     }
 
     @Override

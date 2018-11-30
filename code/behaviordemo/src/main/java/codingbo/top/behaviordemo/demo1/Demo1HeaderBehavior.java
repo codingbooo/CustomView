@@ -3,6 +3,7 @@ package codingbo.top.behaviordemo.demo1;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -21,13 +22,14 @@ public class Demo1HeaderBehavior extends BaseBehavior {
     public void onNestedPreScroll(@NonNull CoordinatorLayout coordinatorLayout,
                                   @NonNull View child, @NonNull View target,
                                   int dx, int dy, @NonNull int[] consumed, int type) {
-        if (dy < 0 || onScrolling) {
+        if (dy < 0 || onScrolling || posByScrollFling) {
+//        if (dy < 0 || onScrolling || type != ViewCompat.TYPE_TOUCH) {
             return;
         }
         //上滑
         float translationY = child.getTranslationY();
 
-        if (translationY < -mHeaderHeight + 100 && isOpen()) {
+        if (translationY < -mHeaderHeight + 100 && getCloseStatus() != State.Closed) {
             if (!onScrolling) {
                 closeHeader();
             }
@@ -36,7 +38,7 @@ public class Demo1HeaderBehavior extends BaseBehavior {
         }
 
         if (translationY > -mHeaderHeight) {
-            float toTransY = translationY - dy;
+            float toTransY = translationY - dy / 2;
             if (toTransY > -mHeaderHeight) {
                 child.setTranslationY(toTransY);
                 consumed[1] = dy;
@@ -52,7 +54,7 @@ public class Demo1HeaderBehavior extends BaseBehavior {
                                @NonNull View child, @NonNull View target, int dxConsumed, int dyConsumed,
                                int dxUnconsumed, int dyUnconsumed, int type) {
         //下滑
-        if (dyUnconsumed >= 0 || !isOpen() || onScrolling) {
+        if (dyUnconsumed >= 0 || getCloseStatus() == State.Closed || onScrolling) {
             return;
         }
         float translationY = child.getTranslationY();
@@ -66,8 +68,14 @@ public class Demo1HeaderBehavior extends BaseBehavior {
     }
 
     @Override
-    public boolean isOpen() {
-        return mView.getTranslationY() > -mHeaderHeight;
+    public State getCloseStatus() {
+        if (mView.getTranslationY() == -mHeaderHeight) {
+            return State.Closed;
+        } else if (mView.getTranslationY() == 0) {
+            return State.Open;
+        } else {
+            return State.Closing;
+        }
     }
 
 

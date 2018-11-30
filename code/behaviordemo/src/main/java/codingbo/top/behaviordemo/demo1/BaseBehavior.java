@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.OverScroller;
 
@@ -13,12 +14,21 @@ import android.widget.OverScroller;
  * on 2018/11/29.
  */
 public abstract class BaseBehavior extends CoordinatorLayout.Behavior {
+    private static final String TAG = "BaseBehavior";
+
+    public enum State {
+        Closed,
+        Open,
+        Closing
+    }
 
     protected final OverScroller mOverScroller;
     protected View mView;
     protected View mHeadView;
     protected int mHeaderHeight;
     protected boolean onScrolling;
+    protected boolean posByScrollFling;
+
 
     public BaseBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -39,10 +49,11 @@ public abstract class BaseBehavior extends CoordinatorLayout.Behavior {
     public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout,
                                        @NonNull View child, @NonNull View directTargetChild,
                                        @NonNull View target, int axes, int type) {
+        posByScrollFling = false;
         return (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
-    public abstract boolean isOpen();
+    public abstract State getCloseStatus();
 
     public abstract void showHeader();
 
@@ -53,6 +64,7 @@ public abstract class BaseBehavior extends CoordinatorLayout.Behavior {
                 0, (int) (toTransY - child.getTranslationY()),
                 200);
         onScrolling = true;
+        posByScrollFling = true;
         child.postOnAnimation(new Runnable() {
             @Override
             public void run() {
