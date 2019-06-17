@@ -2,7 +2,7 @@
 //    commandLine 'mshta', 'vbscript:msgbox("我运行啦!!!!",128,"提醒")(window.close)'
 //}
 
-include ':app', ':behaviordemo'
+include ':app', ':behaviordemo', ':instagramstudy'
 include ':viewlibrary'
 include ':viewanimatordemo'
 include 'viewstudy'
