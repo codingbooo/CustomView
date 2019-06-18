@@ -1,4 +1,4 @@
-package top.codingbo.instagramstudy;
+package codingbo.top.windowmanager;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("top.codingbo.instagramstudy", appContext.getPackageName());
+        assertEquals("codingbo.top.windowmanager", appContext.getPackageName());
     }
 }

@@ -2,10 +2,13 @@
 //    commandLine 'mshta', 'vbscript:msgbox("我运行啦!!!!",128,"提醒")(window.close)'
 //}
 
-include ':app', ':behaviordemo', ':instagramstudy'
+include ':app'
 include ':viewlibrary'
 include ':viewanimatordemo'
 include 'viewstudy'
 include 'study'
+include ':behaviordemo'
+include ':windowmanager'
+include ':instagramstudy'
 
 rootProject.name = 'ViewDemo'

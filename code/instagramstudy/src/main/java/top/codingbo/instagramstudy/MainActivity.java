@@ -21,11 +21,13 @@ public class MainActivity extends AppCompatActivity {
     public void openPicker(View view) {
 //        startActivity(new Intent(this, PhotoPickerActivity.class));
 
-        BoxingConfig config = new BoxingConfig(BoxingConfig.Mode.SINGLE_IMG); // Mode：Mode.SINGLE_IMG, Mode.MULTI_IMG, Mode.VIDEO
-        config
+        BoxingConfig config =
+                // Mode：Mode.SINGLE_IMG, Mode.MULTI_IMG, Mode.VIDEO
+                new BoxingConfig(BoxingConfig.Mode.SINGLE_IMG)
 //                .needCamera(cameraRes)
-                .needGif()
-                .withMaxCount(9); // 支持gif，相机，设置最大选图数
+                        .needGif()
+                        // 支持gif，相机，设置最大选图数
+                        .withMaxCount(9);
 //        // 启动缩略图界面, 依赖boxing-impl.
 //        Boxing.of(config).withIntent(this, BoxingActivity.class).start(this);
 

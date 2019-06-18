@@ -1,4 +1,4 @@
-package top.codingbo.instagramstudy;
+package codingbo.top.windowmanager;
 
 import org.junit.Test;
 
