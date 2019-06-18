@@ -1,15 +1,13 @@
 package top.codingbo.instagramstudy;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.bilibili.boxing.Boxing;
 import com.bilibili.boxing.model.config.BoxingConfig;
-import com.bilibili.boxing_impl.ui.BoxingActivity;
 
-import top.codingbo.instagramstudy.photo.picker.PhotoPickerActivity;
+import top.codingbo.instagramstudy.photo.picker.PhotoPicker3Activity;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +29,6 @@ public class MainActivity extends AppCompatActivity {
 //        // 启动缩略图界面, 依赖boxing-impl.
 //        Boxing.of(config).withIntent(this, BoxingActivity.class).start(this);
 
-        Boxing.of(config).withIntent(this, PhotoPickerActivity.class).start(this);
+        Boxing.of(config).withIntent(this, PhotoPicker3Activity.class).start(this);
     }
 }
