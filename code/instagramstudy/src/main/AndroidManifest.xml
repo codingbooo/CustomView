@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".photo.picker.PhotoPickerActivity"/>
+        <activity android:name=".photo.picker.PhotoPicker2Activity"/>
         <activity android:name=".photo.picker.PhotoPicker3Activity"/>
     </application>
 
