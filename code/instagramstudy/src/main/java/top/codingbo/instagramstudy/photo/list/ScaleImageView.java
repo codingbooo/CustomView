@@ -1,9 +1,8 @@
 package top.codingbo.instagramstudy.photo.list;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.graphics.Point;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -28,6 +27,7 @@ public class ScaleImageView extends android.support.v7.widget.AppCompatImageView
     private RectF mRect;
     private boolean scaling;
     private PointF mPointF;
+    private RectF mResetRect;
 
     public ScaleImageView(Context context) {
         super(context);
@@ -102,55 +102,44 @@ public class ScaleImageView extends android.support.v7.widget.AppCompatImageView
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             float factor = detector.getScaleFactor();
-            Log.d(TAG, "onScale: " + factor);
+//            Log.d(TAG, "onScale: " + factor);
 
-//            detector.getCurrentSpan()
+            scaleImage = factor;
 
-//            float scaleX = mScaleX * factor;
-//            float scaleY = mScaleY * factor;
+            // 基于两指中间点的位置
+            float wid = mRect.width() * (factor - 1);
+            float hei = mRect.height() * (factor - 1);
+            Log.d(TAG, "wid:hei =  " + wid + "," + hei);
+//            mRect.left -= wid;
+//            mRect.top -= hei;
+//            mRect.right += wid;
+//            mRect.bottom += hei;
+            mRect.inset(-wid, -hei);
 
-//            detector.getCurrentSpan()
-
-//            setScaleX(factor);
-//            setScaleY(factor);
-
-//            setScaleX(2);
-//            setScaleY(2);
-
-//            detector.getFocusX();
-
-//            mRight *= factor;
-//            mBottom *= factor;
-
-
-            // todo 改为基于点的位置
-            mRect.right *= factor;
-            mRect.bottom *= factor;
-
-//            layout(mLeft,
-//                    mTop,
-//                    (int) (mRight * factor),
-//                    (int) (mBottom * factor));
+            //todo 双指平移
+//            float dx = detector.getFocusX() - mPointF.x;
+//            float dy = detector.getFocusY() - mPointF.y;
+//            Log.d(TAG, "onScale: dx, dy = " + dx + ", " + dy);
+//            mRect.offset(dx, dy);
 
 
-            float dx = detector.getFocusX() - mPointF.x;
-            float dy = detector.getFocusY() - mPointF.y;
-            Log.d(TAG, "onScale: dx, dy = " + dx + ", " + dy);
-            mRect.offset(dx, dy);
+//            Log.d(TAG, "onScale mRect: " + mRect.left
+//                    + "," + mRect.top
+//                    + "," + mRect.right
+//                    + "," + mRect.bottom
+//            );
 
-            layout((int) mRect.left,
-                    (int) mRect.top,
-                    (int) mRect.right,
-                    (int) mRect.bottom);
+//            mRect.right *= factor;
+//            mRect.bottom *= factor;
 
-
+            relayout(mRect);
             return true;
         }
 
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
             Log.d(TAG, "onScaleEnd: ");
-//            showDefault();
+            showDefault();
 //            scaling = false;
         }
     }
@@ -167,8 +156,39 @@ public class ScaleImageView extends android.support.v7.widget.AppCompatImageView
         Toast.makeText(getContext(), "big", Toast.LENGTH_SHORT).show();
     }
 
+    private float scaleImage;
+
+    public float getScaleImage() {
+        return scaleImage;
+    }
+
+    public void setScaleImage(float scaleImage) {
+        float l = mLeft + (mRect.left - mLeft) * scaleImage;
+        float t = mTop + (mRect.top - mTop) * scaleImage;
+        float r = mRight + (mRect.right - mRight) * scaleImage;
+        float b = mBottom + (mRect.bottom - mBottom) * scaleImage;
+        mResetRect.set(l, t, r, b);
+        relayout(mResetRect);
+    }
+
+    private void relayout(RectF rectF) {
+//        Log.d(TAG, "relayout: " + (int) rectF.left
+//                + "," + (int) rectF.top
+//                + "," + (int) rectF.right
+//                + "," + (int) rectF.bottom
+//        );
+
+        layout((int) rectF.left,
+                (int) rectF.top,
+                (int) rectF.right,
+                (int) rectF.bottom);
+    }
+
     private void showDefault() {
-        setScaleX(1);
-        setScaleY(1);
+        mResetRect = new RectF(mRect);
+        ObjectAnimator.ofFloat(this, "scaleImage", 1, 0)
+                .setDuration(300)
+                .start();
+        scaling = false;
     }
 }
