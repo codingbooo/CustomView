@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<top.codingbo.instagramstudy.photo.list.MyLinearLayout2
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
+    android:clipToPadding="false"
     android:gravity="center"
+    android:orientation="vertical"
     >
 
 
-    <LinearLayout
+    <top.codingbo.instagramstudy.photo.list.MyLinearLayout
+        android:id="@+id/ll_parent"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:background="#595A5E"
+        android:background="#FF9800"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         >
 
         <top.codingbo.instagramstudy.photo.list.ScaleImageView
@@ -21,9 +27,20 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:scaleType="centerCrop"
+
             android:src="@drawable/image"/>
 
-    </LinearLayout>
+    </top.codingbo.instagramstudy.photo.list.MyLinearLayout>
+
+
+    <!--遮住图片,因为每次 ScaleImageView 调用layout()时 后续 父View的onDraw总会被调用-->
+    <top.codingbo.instagramstudy.photo.list.MyView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="#595A5E"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        />
 
 
     <!--<top.codingbo.instagramstudy.photo.list.ScaleImageView-->
@@ -34,4 +51,4 @@
     <!--android:scaleType="centerCrop"-->
     <!--android:src="@drawable/image"/>-->
 
-</LinearLayout>
+</top.codingbo.instagramstudy.photo.list.MyLinearLayout2>

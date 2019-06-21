@@ -2,6 +2,7 @@ package top.codingbo.instagramstudy.photo.list;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
@@ -68,16 +69,6 @@ public class ScaleImageView extends android.support.v7.widget.AppCompatImageView
 //        return b;
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-    }
-
     private class ScaleGestureListener implements ScaleGestureDetector.OnScaleGestureListener {
 
 
@@ -109,7 +100,7 @@ public class ScaleImageView extends android.support.v7.widget.AppCompatImageView
             // 基于两指中间点的位置
             float wid = mRect.width() * (factor - 1);
             float hei = mRect.height() * (factor - 1);
-            Log.d(TAG, "wid:hei =  " + wid + "," + hei);
+//            Log.d(TAG, "wid:hei =  " + wid + "," + hei);
 //            mRect.left -= wid;
 //            mRect.top -= hei;
 //            mRect.right += wid;
@@ -121,16 +112,6 @@ public class ScaleImageView extends android.support.v7.widget.AppCompatImageView
 //            float dy = detector.getFocusY() - mPointF.y;
 //            Log.d(TAG, "onScale: dx, dy = " + dx + ", " + dy);
 //            mRect.offset(dx, dy);
-
-
-//            Log.d(TAG, "onScale mRect: " + mRect.left
-//                    + "," + mRect.top
-//                    + "," + mRect.right
-//                    + "," + mRect.bottom
-//            );
-
-//            mRect.right *= factor;
-//            mRect.bottom *= factor;
 
             relayout(mRect);
             return true;
@@ -190,5 +171,24 @@ public class ScaleImageView extends android.support.v7.widget.AppCompatImageView
                 .setDuration(300)
                 .start();
         scaling = false;
+    }
+
+
+    @Override
+    protected void onMeasure(int widthSpec, int heightSpec) {
+        super.onMeasure(widthSpec, heightSpec);
+        Log.d(TAG, "onMeasure: ");
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        Log.d(TAG, "onLayout: ");
+    }
+
+    @Override
+    public void onDraw(Canvas c) {
+        super.onDraw(c);
+        Log.d(TAG, "onDraw: ");
     }
 }

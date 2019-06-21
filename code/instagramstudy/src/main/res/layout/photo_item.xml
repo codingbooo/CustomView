@@ -6,16 +6,6 @@
     android:layout_height="wrap_content"
     android:background="@color/boxing_white">
 
-
-    <top.codingbo.instagramstudy.photo.list.ScaleImageView
-        android:id="@+id/iv_image"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-
     <TextView
         android:id="@+id/tv_1"
         android:layout_width="wrap_content"
@@ -25,7 +15,7 @@
         android:text="评论"
         app:layout_constraintEnd_toStartOf="@id/tv_2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_image"/>
+        app:layout_constraintTop_toBottomOf="@+id/iv_image"/>
 
     <TextView
         android:id="@+id/tv_2"
@@ -36,7 +26,7 @@
         android:text="投币"
         app:layout_constraintEnd_toStartOf="@id/tv_3"
         app:layout_constraintStart_toEndOf="@id/tv_1"
-        app:layout_constraintTop_toBottomOf="@id/iv_image"/>
+        app:layout_constraintTop_toBottomOf="@+id/iv_image"/>
 
     <TextView
         android:id="@+id/tv_3"
@@ -47,6 +37,14 @@
         android:text="转发"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_2"
-        app:layout_constraintTop_toBottomOf="@id/iv_image"/>
+        app:layout_constraintTop_toBottomOf="@+id/iv_image"/>
+
+    <top.codingbo.instagramstudy.photo.list.ScaleImageView
+        android:id="@+id/iv_image"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

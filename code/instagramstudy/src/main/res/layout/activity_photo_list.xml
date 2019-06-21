@@ -4,10 +4,17 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
     android:background="@color/boxing_black"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/recycler"-->
+        <!--android:clipChildren="false"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
+
+    <top.codingbo.instagramstudy.photo.list.MyRecyclerView
         android:id="@+id/recycler"
         android:clipChildren="false"
         android:layout_width="match_parent"
