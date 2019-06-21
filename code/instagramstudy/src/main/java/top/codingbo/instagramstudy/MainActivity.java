@@ -9,6 +9,7 @@ import com.bilibili.boxing.Boxing;
 import com.bilibili.boxing.model.config.BoxingConfig;
 
 import top.codingbo.instagramstudy.photo.list.PhotoListActivity;
+import top.codingbo.instagramstudy.photo.list.ScaleHelperActivity;
 import top.codingbo.instagramstudy.photo.list.ScaleViewActivity;
 import top.codingbo.instagramstudy.photo.picker.PhotoPicker2Activity;
 
@@ -45,5 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void scaleView(View view) {
         startActivity(new Intent(this, ScaleViewActivity.class));
+    }
+    public void scaleHelperView(View view) {
+        startActivity(new Intent(this, ScaleHelperActivity.class));
     }
 }

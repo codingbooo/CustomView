@@ -26,6 +26,7 @@
         <activity android:name=".photo.picker.PhotoPicker3Activity"/>
         <activity android:name=".photo.list.PhotoListActivity"/>
         <activity android:name=".photo.list.ScaleViewActivity"/>
+        <activity android:name=".photo.list.ScaleHelperActivity"/>
     </application>
 
 </manifest>

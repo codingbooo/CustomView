@@ -25,4 +25,10 @@
         android:onClick="scaleView"
         android:text="scale view"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="scaleHelperView"
+        android:text="scale helper view"/>
+
 </LinearLayout>
