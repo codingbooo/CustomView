@@ -403,7 +403,7 @@ public class FloatContainerLayout extends ViewGroup {
         return new LayoutParams(getContext(), attrs);
     }
 
-    class LayoutParams extends MarginLayoutParams {
+    public static class LayoutParams extends MarginLayoutParams {
 
         public float x;
         public float y;

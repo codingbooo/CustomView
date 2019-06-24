@@ -33,17 +33,19 @@ public class ScaleHelperActivity extends AppCompatActivity {
 
         View view = findViewById(R.id.iv_image);
 
+        mScaleHelper.setTagView(view);
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mScaleHelper.setTagView(v);
+//                mScaleHelper.setTagView(v);
             }
         });
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return mScaleHelper.onTouchEvent(event)
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return mScaleHelper.dispatchTouch(event)
                 || super.onTouchEvent(event);
     }
 }

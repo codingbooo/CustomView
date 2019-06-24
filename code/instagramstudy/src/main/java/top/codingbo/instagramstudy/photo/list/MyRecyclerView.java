@@ -12,7 +12,7 @@ import android.util.Log;
  * Created by bob
  * on 2019/6/20.
  */
-public class MyRecyclerView extends RecyclerView {
+public class  MyRecyclerView extends RecyclerView {
     private static final String TAG = "MyRecyclerView";
 
     public MyRecyclerView(@NonNull Context context) {

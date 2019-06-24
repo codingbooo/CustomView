@@ -25,8 +25,13 @@
         <activity android:name=".photo.picker.PhotoPicker2Activity"/>
         <activity android:name=".photo.picker.PhotoPicker3Activity"/>
         <activity android:name=".photo.list.PhotoListActivity"/>
+
+
+        <activity android:name=".photo.list.ScaleMainActivity"/>
         <activity android:name=".photo.list.ScaleViewActivity"/>
         <activity android:name=".photo.list.ScaleHelperActivity"/>
+        <activity android:name=".photo.list.scalehelper.ScaleLayoutActivity"/>
+        <activity android:name=".photo.list.scalehelper.PhotoList2Activity"/>
     </application>
 
 </manifest>

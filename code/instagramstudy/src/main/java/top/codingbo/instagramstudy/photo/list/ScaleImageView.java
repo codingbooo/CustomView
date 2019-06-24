@@ -57,15 +57,15 @@ public class ScaleImageView extends android.support.v7.widget.AppCompatImageView
             boolean b = mScaleGestureDetector.onTouchEvent(event);
             getParent().requestDisallowInterceptTouchEvent(b);
 
-//            Log.d(TAG, "onTouchEvent: " + b);
+//            Log.d(TAG, "dispatchTouch: " + b);
             return b;
         }
 
 
         return super.onTouchEvent(event);
 
-//        boolean b = mScaleGestureDetector.onTouchEvent(event);
-//        Log.d(TAG, "onTouchEvent: " + b);
+//        boolean b = mScaleGestureDetector.dispatchTouch(event);
+//        Log.d(TAG, "dispatchTouch: " + b);
 //        return b;
     }
 
