@@ -8,6 +8,8 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Arrays;
+
 import top.codingbo.instagramstudy.R;
 
 /**
@@ -21,6 +23,10 @@ import top.codingbo.instagramstudy.R;
  * 5. 释放目标View
  * <p>
  * https://github.com/okaybroda/ImageZoom
+ * <p>
+ * Fixme 1. 缩放位置不准确
+ * Fixme 2. 开始缩放会闪屏一下
+ * Fixme 3. 偶见缩放 上一次内容问题
  */
 public class ScaleHelper {
     private static final String TAG = "ScaleHelper";
@@ -29,8 +35,6 @@ public class ScaleHelper {
     private ScaleGestureDetector mScaleGestureDetector;
     private View mTargetView;
     private ScaleViewDialog mDialog;
-    private float mX;
-    private float mY;
 
     private ScaleHelper(Activity activity) {
         mActivity = activity;
@@ -45,15 +49,12 @@ public class ScaleHelper {
         if (event.getPointerCount() < 2) {
             return false;
         }
-
         if (mTargetView == null) {
             mTargetView = findTargetView(event);
             if (mTargetView == null) {
-                Log.d(TAG, "没找到...");
                 return false;
             }
         }
-        Log.d(TAG, "找到了...");
         // 为何 一直返回true??
         boolean b = mScaleGestureDetector.onTouchEvent(event);
         Log.d(TAG, "dispatchTouch: " + b);
@@ -67,11 +68,6 @@ public class ScaleHelper {
 
     private View findView(ViewGroup viewGroup, MotionEvent event) {
         Rect rect = new Rect();
-        MotionEvent.PointerCoords pointerCoords1 = new MotionEvent.PointerCoords();
-        event.getPointerCoords(0, pointerCoords1);
-
-        MotionEvent.PointerCoords pointerCoords2 = new MotionEvent.PointerCoords();
-        event.getPointerCoords(1, pointerCoords2);
 
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View child = viewGroup.getChildAt(i);
@@ -83,11 +79,8 @@ public class ScaleHelper {
             rect.right = rect.left + child.getWidth();
             rect.bottom = rect.top + child.getHeight();
 
-//            boolean contain = rect.contains((int) event.getX(0), (int) event.getY(0))
-//                    && rect.contains((int) event.getX(1), (int) event.getY(1));
-
-            boolean contain = rect.contains((int) pointerCoords1.x, (int) pointerCoords1.y)
-                    && rect.contains((int) pointerCoords2.x, (int) pointerCoords2.y);
+            boolean contain = rect.contains((int) event.getX(0), (int) event.getY(0))
+                    && rect.contains((int) event.getX(1), (int) event.getY(1));
 
             if (child.getTag(TAG_KEY) != null && contain) {
                 return child;
@@ -111,18 +104,16 @@ public class ScaleHelper {
 
         private float mFocusX;
         private float mFocusY;
-        private int mWidth;
-        private int mHeight;
+
+
+        private int[] pos = new int[2];
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
             Log.d(TAG, "onScaleBegin: ");
 
-            mX = mTargetView.getX();
-            mY = mTargetView.getY();
-            mWidth = mTargetView.getWidth();
-            mHeight = mTargetView.getHeight();
-
+            mTargetView.getLocationInWindow(pos);
+            Log.d(TAG, "onScaleBegin: " + Arrays.toString(pos));
             mFocusX = detector.getFocusX();
             mFocusY = detector.getFocusY();
 
@@ -133,9 +124,9 @@ public class ScaleHelper {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             Log.d(TAG, "onScale: ");
-            int x = (int) (mX + detector.getFocusX() - mFocusX);
-            int y = (int) (mY + detector.getFocusY() - mFocusY);
-
+            int x = (int) (pos[0] + detector.getFocusX() - mFocusX);
+            int y = (int) (pos[1] + detector.getFocusY() - mFocusY);
+            Log.d(TAG, "onScale: " + x + "," + y);
             float factor = detector.getScaleFactor();
             mDialog.setLayout(new int[]{x, y}, (int) (mTargetView.getWidth() * factor), (int) (mTargetView.getHeight() * factor));
             return true;
@@ -160,7 +151,6 @@ public class ScaleHelper {
     private void bindView(View view) {
         mDialog = new ScaleViewDialog(mActivity, view);
         int[] pos = new int[2];
-//        mTargetView.getLocationOnScreen(pos);
         view.getLocationInWindow(pos);
         mDialog.setLayout(pos, view.getWidth(), view.getHeight());
         mDialog.show();

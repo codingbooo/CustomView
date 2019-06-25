@@ -4,12 +4,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.FrameLayout;
+
+import java.util.Arrays;
 
 import top.codingbo.instagramstudy.R;
 
@@ -63,8 +62,9 @@ public class ScaleViewDialog extends Dialog {
         mTargetParentView.removeView(mTargetView);
 
         //添加到Dialog
-        mContainer.scaleByPoint(mPos[0], mPos[1], mWidth, mHeight);
+        Log.d(TAG, "bindView: " + Arrays.toString(mPos));
         mContainer.addView(mTargetView);
+        mContainer.moveTo(mPos[0], mPos[1]);
 
         mTargetParentView.addView(mPlaceHolder, mTagViewParams);
     }
@@ -80,7 +80,6 @@ public class ScaleViewDialog extends Dialog {
         mWidth = width;
         mHeight = height;
         if (mContainer != null) {
-//            mContainer.scaleByPoint(pos[0], pos[1], width, height);
             mContainer.scaleFromCenter(width, height);
             mContainer.moveTo(pos[0], pos[1]);
         }
