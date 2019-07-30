@@ -1,16 +1,13 @@
 package top.codingbo.instagramstudy.photo.list.scalehelper;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by bob
@@ -21,8 +18,19 @@ public class ScaleLayout extends FrameLayout implements ScaleParent {
     private View mTargetView;
     private float mX;
     private float mY;
-    private int mWidth;
-    private int mHeight;
+    private float mWidth;
+    private float mHeight;
+    //初始位置
+    private float mInitX;
+    private float mInitY;
+    private float mInitWidth;
+    private float mInitHeight;
+
+    private float backFactor;
+    private float mDx;
+    private float mDy;
+    private float mDWidth;
+    private float mDHeight;
 
     public ScaleLayout(@NonNull Context context) {
         super(context);
@@ -68,20 +76,24 @@ public class ScaleLayout extends FrameLayout implements ScaleParent {
         mHeight = mTargetView.getHeight();
     }
 
-    private void layoutTarget() {
-        if (mTargetView != null) {
-            mTargetView.layout(
-                    (int) mX,
-                    (int) mY,
-                    (int) mX + mWidth,
-                    (int) mY + mHeight);
-        }
+    public void setInitPosition(float x, float y, float width, float height) {
+        mX = mInitX = x;
+        mY = mInitY = y;
+        mWidth = mInitWidth = width;
+        mHeight = mInitHeight = height;
     }
 
     @Override
     public void moveTo(int x, int y) {
         mX = x;
         mY = y;
+        layoutTarget();
+    }
+
+    @Override
+    public void moveBy(int dx, int dy) {
+        mX += dx;
+        mY += dy;
         layoutTarget();
     }
 
@@ -102,60 +114,57 @@ public class ScaleLayout extends FrameLayout implements ScaleParent {
 
     @Override
     public void scaleByPoint(int x, int y, int width, int height) {
-        //计算 以(x,y)为中心时 缩放的偏移量
-        mX -= (width - mWidth) / (mWidth / (x - mX));
-        mY -= (height - mHeight) / (mHeight / (y - mY));
+//        RectF f = new RectF(mX, mY, mX + mWidth, mY + mHeight);
+
+        // xy 相对中心偏移量
+        float dx = (x - mX) / mWidth * (width - mWidth);
+        float dy = (y - mY) / mHeight * (height - mHeight);
+
+        // 扩大中心偏移量
+        float dcx = (mWidth - width) / 2F;
+        float dcy = (mHeight - height) / 2F;
+
+        mX = mX + dx + dcx;
+        mY = mY + dy + dcy;
 
         mWidth = width;
         mHeight = height;
         layoutTarget();
     }
 
-
-    public String store(List<HashMap<String, String>> a) {
-        if (a == null || a.size() <= 0) {
-            return "";
+    private void layoutTarget() {
+        if (mTargetView != null) {
+            mTargetView.layout(
+                    (int) mX,
+                    (int) mY,
+                    (int) (mX + mWidth),
+                    (int) (mY + mHeight));
         }
-
-        StringBuilder builder = new StringBuilder();
-
-        for (HashMap<String, String> map : a) {
-            if (map == null || map.size() <= 0) {
-                continue;
-            }
-            for (String s : map.keySet()) {
-                builder.append(s).append("=").append(map.get(s)).append(";");
-            }
-            builder.append("\n");
-        }
-        return builder.toString();
     }
 
-    public List<HashMap<String, String>> load(String text) {
-        if (TextUtils.isEmpty(text)
-                //不存在键值对
-                || !text.contains("=")) {
-            return null;
-        }
-        String[] list = text.split("\n");
-        ArrayList<HashMap<String, String>> result = new ArrayList<>();
-        for (String item : list) {
-            if (!item.contains("=")) {
-                continue;
-            }
-            String[] mapString = item.split(";");
-            HashMap<String, String> map = new HashMap<>(mapString.length);
-            for (String s : mapString) {
-                //判断
-                if (!item.contains("=")) {
-                    continue;
-                }
-                String[] kv = s.split("=");
-                map.put(kv[0], kv[1]);
-            }
-            result.add(map);
-        }
-        return result;
+    public void backToInitPosition(Animator.AnimatorListener listener) {
+        mDx = mX - mInitX;
+        mDy = mY - mInitY;
+        mDWidth = mWidth - mInitWidth;
+        mDHeight = mHeight - mInitHeight;
+
+        ObjectAnimator animator = ObjectAnimator
+                .ofFloat(this, "backFactor", 1, 0)
+                .setDuration(300);
+        animator.addListener(listener);
+        animator.start();
     }
 
+    public float getBackFactor() {
+        return backFactor;
+    }
+
+    public void setBackFactor(float backFactor) {
+        this.backFactor = backFactor;
+        mX = mInitX + mDx * backFactor;
+        mY = mInitY + mDy * backFactor;
+        mWidth = (int) (mInitWidth + mDWidth * backFactor);
+        mHeight = (int) (mInitHeight + mDHeight * backFactor);
+        layoutTarget();
+    }
 }

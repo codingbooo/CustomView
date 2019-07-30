@@ -14,6 +14,8 @@ public interface ScaleParent {
      */
     void moveTo(int x, int y);
 
+    void moveBy(int dx, int dy);
+
     /**
      * 缩放到制定大小
      *

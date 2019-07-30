@@ -107,15 +107,19 @@ public class ScaleHelper {
 
 
         private int[] pos = new int[2];
+        private int mWidth;
+        private int mHeight;
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
             Log.d(TAG, "onScaleBegin: ");
 
             mTargetView.getLocationInWindow(pos);
-            Log.d(TAG, "onScaleBegin: " + Arrays.toString(pos));
             mFocusX = detector.getFocusX();
             mFocusY = detector.getFocusY();
+
+            mWidth = mTargetView.getWidth();
+            mHeight = mTargetView.getHeight();
 
             bindView(mTargetView);
             return true;
@@ -127,9 +131,10 @@ public class ScaleHelper {
             int x = (int) (pos[0] + detector.getFocusX() - mFocusX);
             int y = (int) (pos[1] + detector.getFocusY() - mFocusY);
             Log.d(TAG, "onScale: " + x + "," + y);
+
             float factor = detector.getScaleFactor();
-            mDialog.setLayout(new int[]{x, y}, (int) (mTargetView.getWidth() * factor), (int) (mTargetView.getHeight() * factor));
-            return true;
+            mDialog.relayout(new int[]{x, y}, (int) (mWidth * factor), (int) (mHeight * factor));
+            return false;
         }
 
         @Override
@@ -137,7 +142,6 @@ public class ScaleHelper {
             Log.d(TAG, "onScaleEnd: ");
             unbindView(mTargetView);
             mTargetView = null;
-
         }
     }
 
@@ -145,7 +149,7 @@ public class ScaleHelper {
         if (mDialog == null) {
             return;
         }
-        mDialog.dismiss();
+        mDialog.unbindView();
     }
 
     private void bindView(View view) {

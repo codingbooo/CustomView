@@ -1,5 +1,7 @@
 package top.codingbo.instagramstudy.photo.list.scalehelper;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -48,10 +50,9 @@ public class ScaleViewDialog extends Dialog {
     @Override
     protected void onStop() {
         super.onStop();
-        unbindView();
     }
 
-    private void bindView() {
+    public void bindView() {
         //创建占位View
         mPlaceHolder = new View(getContext());
         mPlaceHolder.setId(mTargetView.getId());
@@ -65,23 +66,36 @@ public class ScaleViewDialog extends Dialog {
         Log.d(TAG, "bindView: " + Arrays.toString(mPos));
         mContainer.addView(mTargetView);
         mContainer.moveTo(mPos[0], mPos[1]);
+        mContainer.setInitPosition(mPos[0], mPos[1], mTargetView.getWidth(), mTargetView.getHeight());
 
         mTargetParentView.addView(mPlaceHolder, mTagViewParams);
     }
 
-    private void unbindView() {
-        mContainer.removeView(mTargetView);
-        mTargetParentView.removeView(mPlaceHolder);
-        mTargetParentView.addView(mTargetView, mTagViewParams);
+    public void unbindView() {
+        mContainer.backToInitPosition(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mContainer.removeView(mTargetView);
+                mTargetParentView.removeView(mPlaceHolder);
+                mTargetParentView.addView(mTargetView, mTagViewParams);
+                dismiss();
+            }
+        });
+    }
+
+    public void relayout(int[] pos, int width, int height) {
+        mPos = pos;
+        mWidth = width;
+        mHeight = height;
+        if (mContainer != null) {
+            mContainer.moveTo(pos[0], pos[1]);
+            mContainer.scaleFromCenter(width, height);
+        }
     }
 
     public void setLayout(int[] pos, int width, int height) {
         mPos = pos;
         mWidth = width;
         mHeight = height;
-        if (mContainer != null) {
-            mContainer.scaleFromCenter(width, height);
-            mContainer.moveTo(pos[0], pos[1]);
-        }
     }
 }
