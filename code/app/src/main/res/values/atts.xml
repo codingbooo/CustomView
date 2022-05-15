@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AvatarView">
+        <attr name="avatar_borderSize" format="dimension" />
+        <attr name="avatar_borderColor" format="color" />
+        <attr name="avatar_shadowSize" format="dimension" />
+        <attr name="avatar_shadowColor" format="color" />
+        <attr name="avatar_shadowDx" format="dimension" />
+        <attr name="avatar_shadowDy" format="dimension" />
+    </declare-styleable>
+
+</resources>

@@ -8,9 +8,15 @@
     tools:context="codingbo.customview.MainActivity">
 
     <Button
-        android:text="unread1"
-        android:onClick="unread1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:onClick="unread1"
+        android:text="unread1" />
 
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="avatarView"
+        android:text="AvatarView" />
 </LinearLayout>

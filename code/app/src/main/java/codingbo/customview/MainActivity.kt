@@ -1,19 +1,25 @@
-package codingbo.customview;
+package codingbo.customview
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
+import android.content.Intent
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.view.View
+import codingbo.customview.databinding.ActivityMainBinding
 
-public class MainActivity extends AppCompatActivity {
+class MainActivity : AppCompatActivity() {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
     }
 
-    public void unread1(View view) {
-        startActivity(new Intent(this, UnreadViewActivity.class));
+    fun unread1(view: View?) = start(UnreadViewActivity::class.java)
+
+    fun avatarView(view: View?) = start(AvatarViewActivity::class.java)
+
+    private fun start(clazz: Class<out AppCompatActivity>) {
+        startActivity(Intent(this, clazz))
     }
 }
